@@ -254,6 +254,7 @@ const WIN_RANK_IDX = 15;
 const IMPEACH_COST = 500;
 const BOARD_LEN = 52;
 const JAIL_POS = 12;
+const MAX_PROMOTE_PER_START = 2;
 
 function getSalary(rankIdx){
   const pin = 9 - Math.floor(rankIdx / 2);
@@ -418,7 +419,7 @@ const fmt = n => n.toLocaleString('zh-CN');
 function randInt(a,b){ return Math.floor(Math.random()*(b-a+1))+a; }
 function pick(arr){ return arr[randInt(0,arr.length-1)]; }
 
-const G = { players:[], turn:0, phase:'setup', dice:[0,0], rolling:false, log:[], lastRollSum:0, auction:null, pendingBuyIndex:null, jailReleasePlayer:null };
+const G = { players:[], turn:0, phase:'setup', dice:[0,0], rolling:false, log:[], lastRollSum:0, auction:null, pendingBuyIndex:null, jailReleasePlayer:null, moving:false };
 
 function renderSetupStep1(){
   const app = $('#app');
@@ -436,6 +437,7 @@ function renderSetupStep1(){
         </div>
         <div class="hint">
           初始政绩 1,500 · 经过起点领俸禄（从九品 200，正从同品同俸，每升一品 +60）<br>
+          经过起点或停在起点，每次最多连续晋升 2 级；停在起点额外再领一次俸禄。<br>
           率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
           走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
           光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
@@ -458,6 +460,7 @@ function renderSetupStep2(count){
         </div>
         <div class="hint">
           初始政绩 1,500 · 经过起点领俸禄（从九品 200，正从同品同俸，每升一品 +60）<br>
+          经过起点或停在起点，每次最多连续晋升 2 级；停在起点额外再领一次俸禄。<br>
           率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
           走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
           光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
@@ -487,7 +490,7 @@ function renderSetupStep2(count){
 
 function startGame(defs){
   G.players = defs.map((d,i)=>({ id:i, name:d.name, color:d.color, cash:START_CASH, rankIdx:0, pos:0, props:[], jailTurns:0, skipTurns:0, bankrupt:false }));
-  G.turn=0; G.phase='playing'; G.dice=[0,0]; G.log=[]; G.lastRollSum=0; G.auction=null; G.pendingBuyIndex=null; G.jailReleasePlayer=null;
+  G.turn=0; G.phase='playing'; G.dice=[0,0]; G.log=[]; G.lastRollSum=0; G.auction=null; G.pendingBuyIndex=null; G.jailReleasePlayer=null; G.moving=false;
   addLog('—— 游戏开始 ——','gold');
   G.players.forEach(p=>addLog(`${p.name} 以新科进士之身，从九品入仕，政绩 ${fmt(START_CASH)}。`,'muted'));
   renderGame(); updateUI();
@@ -567,6 +570,7 @@ function renderBoard(){
     grid.appendChild(el);
   });
   renderTokens();
+  renderLogBox();
 }
 
 function renderTokens(){
@@ -687,7 +691,7 @@ function updateActionBar(){
   const rollBtn=document.createElement('button');
   rollBtn.className='btn btn-primary';
   rollBtn.textContent=G.rolling?'掷骰中…':'掷骰子';
-  rollBtn.disabled=G.rolling;
+  rollBtn.disabled=G.rolling || G.moving;
   rollBtn.onclick=rollDice;
   bar.appendChild(rollBtn);
 
@@ -700,7 +704,7 @@ function updateActionBar(){
 }
 
 function rollDice(){
-  if(G.phase!=='playing'||G.rolling) return;
+  if(G.phase!=='playing'||G.rolling||G.moving) return;
   const cur=G.players[G.turn];
   if(!cur||cur.bankrupt){ advanceTurn(); return; }
   G.rolling=true; updateActionBar();
@@ -732,11 +736,13 @@ function moveCurrentPlayer(steps){
   if(newPos<0) newPos+=BOARD_LEN;
   if(steps>0 && (oldPos+steps)>=BOARD_LEN) passedStart=true;
 
+  G.moving=true; updateActionBar();
+
   let cur=oldPos;
   let remaining=Math.abs(steps);
   const dir=steps>=0?1:-1;
   const walk=()=>{
-    if(G.phase==='over') return;
+    if(G.phase==='over'){ G.moving=false; return; }
     if(remaining<=0){
       p.pos=newPos; renderTokens();
       if(passedStart && steps>0){
@@ -747,7 +753,7 @@ function moveCurrentPlayer(steps){
         if(newPos === 0){
           settleLanding(p);
         } else {
-          tryPromote(p, false, () => { settleLanding(p); });
+          tryPromote(p, MAX_PROMOTE_PER_START, () => { settleLanding(p); });
         }
         return;
       }
@@ -765,21 +771,24 @@ function moveCurrentPlayer(steps){
   walk();
 }
 
-function tryPromote(p, allowRepeat, onDone){
-  if(p.rankIdx >= WIN_RANK_IDX){ onDone(); return; }
+function tryPromote(p, remaining, onDone){
+  if(remaining <= 0){ G.moving=false; updateActionBar(); onDone(); return; }
+  if(p.rankIdx >= WIN_RANK_IDX){ G.moving=false; updateActionBar(); onDone(); return; }
   const nextRank = p.rankIdx + 1;
   const cost = RANK_COST[nextRank];
   if(p.cash < cost){
     addLog(`${p.name} 的政绩不足以支付考绩费用（需 ${fmt(cost)}），未能晋升。`,'muted');
+    G.moving=false; updateActionBar();
     onDone();
     return;
   }
+  const repeatHint = remaining > 1 ? ` · 本次还可再晋升 ${remaining-1} 级` : '';
   showModal({
     title: '🏯 考绩晋升',
     body: `<p>${p.name} 经过/停留在王都贵阳，可以花费 <b>${fmt(cost)}</b> 政绩进行考绩，晋升为「${RANKS[nextRank]}」。</p>
-           <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)} · 晋升后俸禄：${fmt(getSalary(nextRank))}${allowRepeat?' · 可连续晋升':''}）</p>`,
+           <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)} · 晋升后俸禄：${fmt(getSalary(nextRank))}${repeatHint}）</p>`,
     actions:[
-      {label: allowRepeat ? '结束晋升' : '放弃晋升', onClick: () => { closeModal(); onDone(); }},
+      {label:'放弃晋升', onClick:() => { closeModal(); G.moving=false; updateActionBar(); onDone(); }},
       {label: `花费 ${fmt(cost)} 晋升`, primary: true, onClick: () => {
         closeModal();
         p.cash -= cost;
@@ -788,10 +797,8 @@ function tryPromote(p, allowRepeat, onDone){
         updateUI();
         if(p.rankIdx >= WIN_RANK_IDX){
           endGame(p, '官拜正二品·尚书令，成为彩云国实务百官之首');
-        } else if(allowRepeat){
-          tryPromote(p, true, onDone);
         } else {
-          onDone();
+          tryPromote(p, remaining - 1, onDone);
         }
       }}
     ]
@@ -799,24 +806,29 @@ function tryPromote(p, allowRepeat, onDone){
 }
 
 function settleLanding(p){
-  if(G.phase==='over') return;
+  if(G.phase==='over'){ G.moving=false; return; }
   const cell=BOARD[p.pos];
   addLog(`${p.name} 停在「${cell.name}」。`,'muted');
 
   if(p.jailTurns>0){
     addLog(`${p.name} 在御史台反省中，本回合不触发地块效果。`,'muted');
-    advanceTurn(); return;
+    G.moving=false; advanceTurn(); return;
   }
 
   switch(cell.type){
-    case 'start':
-      addLog(`${p.name} 停在王都贵阳，可连续考绩晋升。`,'muted');
-      tryPromote(p, true, () => advanceTurn());
+    case 'start': {
+      const bonus = getSalary(p.rankIdx);
+      p.cash += bonus;
+      addLog(`${p.name} 停在王都贵阳，额外获得考绩奖励 ${fmt(bonus)} 政绩。`,'gold');
+      updateUI();
+      tryPromote(p, MAX_PROMOTE_PER_START, () => { G.moving=false; advanceTurn(); });
       break;
+    }
     case 'prop':
-      handleProperty(p,p.pos); break;
+      G.moving=false; handleProperty(p,p.pos); break;
     case 'chance': {
       if (cell.name === '吏部') {
+        G.moving=false; updateActionBar();
         showModal({
           title: '📜 吏部·案牍',
           body: `<p>碧珀明把一摞文书推到你面前：“啊！今天都要干完。”你深吸一口气，埋头苦干。</p>
@@ -836,6 +848,7 @@ function settleLanding(p){
           }}]
         });
       } else if (cell.name === '兵部') {
+        G.moving=false; updateActionBar();
         showModal({
           title: '📜 兵部·棋局',
           body: `<p>孙陵王摆开棋盘：“来一局？”你硬着头皮坐下。</p>
@@ -855,6 +868,7 @@ function settleLanding(p){
           }}]
         });
       } else if (cell.name === '工部') {
+        G.moving=false; updateActionBar();
         showModal({
           title: '📜 工部·酒局',
           body: `<p>欧阳侍郎第无数次纠正：“叫我玉，不是阳玉。”你赶紧点头称是。</p>
@@ -874,15 +888,18 @@ function settleLanding(p){
           }}]
         });
       } else {
+        G.moving=false; updateActionBar();
         drawCard(p,'chance');
       }
       break;
     }
     case 'fate':
+      G.moving=false; updateActionBar();
       drawCard(p,'fate'); break;
     case 'tax':{
       const amount=cell.name.includes('罚金')?100:80;
       addLog(`${p.name} 需缴纳${cell.name} ${fmt(amount)} 政绩。`,'red');
+      G.moving=false; updateActionBar();
       chargePlayer(p,amount,()=>advanceTurn());
       break;
     }
@@ -890,11 +907,12 @@ function settleLanding(p){
       const targets = G.players.filter(pl => !pl.bankrupt && pl.id !== p.id && pl.rankIdx > p.rankIdx);
       if(targets.length === 0){
         addLog(`${p.name} 来到御史台，今日无官阶高于自己的同僚可弹劾。`,'muted');
-        advanceTurn();
+        G.moving=false; advanceTurn();
       } else if(p.cash < IMPEACH_COST){
         addLog(`${p.name} 来到御史台，但政绩不足 ${fmt(IMPEACH_COST)}，无法发起弹劾。`,'muted');
-        advanceTurn();
+        G.moving=false; advanceTurn();
       } else {
+        G.moving=false; updateActionBar();
         showModal({
           title: '⚔️ 御史台·弹劾',
           body: `<p>${p.name} 来到御史台。可花费 <b>${fmt(IMPEACH_COST)}</b> 政绩弹劾一名官阶高于自己的同僚，使其降职一级并打入御史台监狱反省 2 回合。</p>
@@ -918,13 +936,13 @@ function settleLanding(p){
     case 'jail': {
       p.jailTurns = JAIL_TURNS;
       addLog(`⛓️ ${p.name} 被御史台扣留，入狱反省 ${JAIL_TURNS} 回合。`,'red');
-      renderTokens(); updateUI(); advanceTurn();
+      renderTokens(); G.moving=false; updateUI(); advanceTurn();
       break;
     }
     case 'rest':
       addLog(`${p.name} 在${cell.name}休息，安然无事。`,'green');
-      advanceTurn(); break;
-    default: advanceTurn();
+      G.moving=false; advanceTurn(); break;
+    default: G.moving=false; advanceTurn();
   }
 }
 
@@ -1028,6 +1046,7 @@ function renderAuctionBar(bar){
   const basePrice = a.basePrice !== undefined ? a.basePrice : Math.floor(cell.price/2);
   const minBid = a.highest === 0 ? basePrice : a.highest + 50;
   const canAfford=bidder.cash>=minBid;
+  const isHighest = a.highestBidder !== null && bidder.id === a.highestBidder;
 
   const info=document.createElement('span');
   info.style.cssText='font-size:12px;color:var(--primary);align-self:center;margin-right:6px;font-weight:600;';
@@ -1050,16 +1069,28 @@ function renderAuctionBar(bar){
     }
   }
 
-  const pass=document.createElement('button');
-  pass.className='btn btn-sm';
-  pass.textContent='放弃';
-  pass.onclick=()=>{
-    a.passed.push(bidder.id);
-    a.currentBidder=(a.currentBidder+1)%G.players.length;
-    addLog(`${bidder.name} 放弃竞拍「${cell.name}」。`,'muted');
-    updateUI();
-  };
-  bar.appendChild(pass);
+  if(isHighest){
+    const keep=document.createElement('button');
+    keep.className='btn btn-sm';
+    keep.textContent='保持出价（跳过）';
+    keep.onclick=()=>{
+      a.currentBidder=(a.currentBidder+1)%G.players.length;
+      addLog(`${bidder.name} 保持出价 ${fmt(a.highest)}。`,'muted');
+      updateUI();
+    };
+    bar.appendChild(keep);
+  } else {
+    const pass=document.createElement('button');
+    pass.className='btn btn-sm';
+    pass.textContent='放弃';
+    pass.onclick=()=>{
+      a.passed.push(bidder.id);
+      a.currentBidder=(a.currentBidder+1)%G.players.length;
+      addLog(`${bidder.name} 放弃竞拍「${cell.name}」。`,'muted');
+      updateUI();
+    };
+    bar.appendChild(pass);
+  }
 }
 
 function auctionBid(bidder,amount){
@@ -1188,7 +1219,7 @@ function advanceTurn(){
 }
 
 function endGame(winner, reason){
-  G.phase='over'; updateUI();
+  G.phase='over'; G.moving=false; updateUI();
   if(winner){
     addLog(`🏆 ${winner.name} ${reason || '官拜正二品·尚书令，成为彩云国实务百官之首'}！`,'gold');
   }else{

@@ -25,72 +25,111 @@
     --shadow-sm: 0 4px 12px rgba(140, 130, 160, 0.08);
     --shadow-md: 0 10px 30px rgba(140, 130, 160, 0.12);
     --shadow-lg: 0 20px 50px rgba(140, 130, 160, 0.2);
-    --radius-lg: 24px;
-    --radius-md: 16px;
-    --radius-sm: 8px;
+    --radius-lg: 20px;
+    --radius-md: 14px;
+    --radius-sm: 7px;
   }
+  html, body { height: 100%; overflow: hidden; }
   body {
     background: var(--bg-gradient);
     color: var(--text-main);
     font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
-    min-height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: flex-start;
-    padding: 24px;
+    align-items: stretch;
+    padding: 10px;
   }
-  #app { width: 1400px; max-width: 100%; display: flex; flex-direction: column; gap: 16px; }
+  #app { width: 1600px; max-width: 100%; height: 100%; display: flex; flex-direction: column; gap: 8px; }
   .topbar {
     display: flex; align-items: center; justify-content: space-between;
-    background: var(--panel); border: none; border-radius: var(--radius-lg);
-    padding: 16px 24px; box-shadow: var(--shadow-sm);
+    background: var(--panel); border: none; border-radius: var(--radius-md);
+    padding: 9px 18px; box-shadow: var(--shadow-sm); flex-shrink: 0;
   }
-  .title { font-size: 20px; letter-spacing: 2px; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 8px; }
-  .title::before { content: ''; display: inline-block; width: 8px; height: 24px; background: var(--primary); border-radius: 4px; }
-  .title small { font-size: 12px; color: var(--text-muted); letter-spacing: 1px; font-weight: 500; margin-left: 8px; }
+  .title { font-size: 17px; letter-spacing: 2px; color: var(--text-main); font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .title::before { content: ''; display: inline-block; width: 6px; height: 20px; background: var(--primary); border-radius: 3px; }
+  .title small { font-size: 11px; color: var(--text-muted); letter-spacing: 1px; font-weight: 500; margin-left: 8px; }
   .phase-tag {
-    font-size: 14px; font-weight: 600; color: var(--primary);
-    background: var(--primary-light); padding: 6px 16px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; color: var(--primary);
+    background: var(--primary-light); padding: 5px 14px; border-radius: 999px;
   }
-  .main { display: flex; gap: 14px; align-items: flex-start; }
-  .players-col { width: 200px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; }
+  .main { flex: 1; min-height: 0; display: flex; gap: 10px; align-items: stretch; }
+  .players-col { width: 140px; flex-shrink: 0; display: flex; flex-direction: column; gap: 5px; overflow-y: auto; padding-right: 2px; scrollbar-width: thin; scrollbar-color: #d1cbe6 transparent; }
   .player-card {
     background: var(--panel); border: 2px solid transparent;
-    border-radius: var(--radius-md); padding: 10px 12px;
-    box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+    border-radius: 10px; padding: 6px 8px;
+    box-shadow: var(--shadow-sm); transition: all 0.25s ease; flex-shrink: 0;
   }
   .player-card.active {
     border-color: var(--primary);
-    box-shadow: 0 0 0 4px var(--primary-light), var(--shadow-md);
-    transform: translateY(-2px);
+    box-shadow: 0 0 0 3px var(--primary-light), var(--shadow-md);
+    transform: translateY(-1px);
   }
-  .player-card.bankrupt { opacity: 0.5; filter: grayscale(1); transform: none; }
-  .pc-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-  .pc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 8px currentColor; }
-  .pc-name { font-size: 14px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .pc-rank { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--gold); background: var(--gold-light); padding: 3px 8px; border-radius: 999px; }
-  .pc-stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
-  .pc-stats b { color: var(--text-main); font-size: 16px; font-weight: 800; }
-  .pc-props { font-size: 11px; color: var(--text-muted); line-height: 1.4; background: var(--panel-2); padding: 6px; border-radius: var(--radius-sm); }
+  .player-card.bankrupt { opacity: 0.45; filter: grayscale(1); transform: none; }
+  .pc-head { display: flex; align-items: center; gap: 5px; margin-bottom: 3px; }
+  .pc-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 6px currentColor; }
+  .pc-name { font-size: 12px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pc-rank { margin-left: auto; font-size: 9px; font-weight: 600; color: var(--gold); background: var(--gold-light); padding: 2px 5px; border-radius: 999px; flex-shrink: 0; }
+  .pc-stats { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-bottom: 2px; }
+  .pc-stats b { color: var(--text-main); font-size: 13px; font-weight: 800; }
+  .pc-next { font-size: 9px; color: var(--gold); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pc-props {
+    font-size: 9px; color: var(--text-muted); line-height: 1.35; background: var(--panel-2);
+    padding: 3px 5px; border-radius: 5px;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+  .pc-jail { font-size: 9px; color: var(--red); margin-top: 3px; font-weight: 600; }
+
   .board-wrap {
-    flex: 1; min-width: 0; background: var(--panel);
-    border-radius: var(--radius-lg); padding: 20px;
-    box-shadow: var(--shadow-md); position: relative;
+    flex: 1; min-width: 0; min-height: 0;
+    background: var(--panel); border-radius: var(--radius-lg); padding: 12px;
+    box-shadow: var(--shadow-md);
+    display: flex; align-items: center; justify-content: center;
   }
   .board-grid {
-    display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(11, 1fr);
-    gap: 6px; aspect-ratio: 15/11; max-height: 720px; margin: 0 auto; width: 100%; max-width: 980px;
+    display: grid;
+    grid-template-columns: repeat(16, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    gap: 3px;
   }
   .cell {
     background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 5px; font-size: 10px; line-height: 1.25;
+    border-radius: 6px; padding: 4px 4px 3px;
+    font-size: 10px; line-height: 1.1;
     overflow: hidden; position: relative; display: flex; flex-direction: column;
-    transition: all 0.2s; cursor: pointer;
+    transition: all 0.15s; cursor: pointer;
   }
-  .cell:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); z-index: 10; border-color: var(--primary-light); }
-  .cell .c-name { font-weight: 700; font-size: 10.5px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cell .c-sub { font-size: 8.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-  .cell .c-price { font-size: 9.5px; font-weight: 700; color: var(--primary); margin-top: auto; background: var(--primary-light); padding: 2px 4px; border-radius: 4px; align-self: flex-start; }
+  .cell:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); z-index: 10; border-color: var(--primary-light); }
+  .cell .c-name {
+    font-weight: 800;
+    font-size: 11px;
+    color: var(--text-main);
+    line-height: 1.1;
+    word-break: break-all;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .cell .c-sub {
+    font-size: 8px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-top: 1px;
+    line-height: 1.1;
+  }
+  .cell .c-price {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-top: auto;
+    background: var(--primary-light);
+    padding: 0px 4px;
+    border-radius: 3px;
+    align-self: flex-start;
+    line-height: 1.4;
+  }
   .cell.type-start { background: #e8f5e9; border-color: #c8e6c9; }
   .cell.type-chance { background: #fff8e1; border-color: #ffecb3; }
   .cell.type-fate { background: #f3e5f5; border-color: #e1bee7; }
@@ -98,20 +137,22 @@
   .cell.type-impeach { background: #fce4ec; border-color: #f8bbd0; }
   .cell.type-rest { background: #e0f7fa; border-color: #b2ebf2; }
   .cell.type-tax { background: #fbe9e7; border-color: #ffccbc; }
-  .cell .c-owner-bar { height: 5px; border-radius: 999px; margin-top: 3px; background: #e0e0e0; width: 80%; }
-  .cell .c-tokens { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 2px; flex-wrap: wrap; justify-content: flex-end; max-width: 80%; }
-  .token { width: 9px; height: 9px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .cell .c-owner-bar { height: 2px; border-radius: 999px; margin-top: 1px; background: #e0e0e0; width: 85%; }
+  .cell .c-tokens { position: absolute; right: 3px; bottom: 3px; display: flex; gap: 2px; flex-wrap: wrap; justify-content: flex-end; max-width: 65%; }
+  .token { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
   .center-panel {
-    grid-column: 2/15; grid-row: 2/11;
+    grid-column: 2 / 16;
+    grid-row: 2 / 12;
     background: #fdfcff; border: 2px dashed var(--border); border-radius: var(--radius-md);
-    display: flex; flex-direction: column; padding: 20px; gap: 16px; overflow: hidden;
+    display: flex; flex-direction: column; padding: 14px; gap: 10px; overflow: hidden;
   }
-  .dice-area { display: flex; align-items: center; gap: 20px; justify-content: center; padding: 10px; }
+  .dice-area { display: flex; align-items: center; gap: 18px; justify-content: center; padding: 4px; flex-shrink: 0; }
   .die {
-    width: 64px; height: 64px; background: var(--panel); border-radius: 16px;
+    width: 56px; height: 56px; background: var(--panel); border-radius: 13px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 36px; font-weight: 900; color: var(--primary);
-    box-shadow: 0 4px 0 #d1cbe6, 0 8px 16px rgba(0,0,0,0.05);
+    font-size: 32px; font-weight: 900; color: var(--primary);
+    box-shadow: 0 3px 0 #d1cbe6, 0 6px 12px rgba(0,0,0,0.05);
     transition: transform 0.12s; font-family: Georgia, serif; border: 2px solid #fff;
   }
   .die.rolling { animation: roll 0.35s linear infinite; }
@@ -121,25 +162,25 @@
     100%{transform:rotate(360deg) scale(1);}
   }
   .dice-info { text-align: left; }
-  .dice-info b { display: block; font-size: 24px; color: var(--text-main); margin-bottom: 2px; font-weight: 900; }
-  .dice-info span { font-size: 13px; color: var(--text-muted); }
+  .dice-info b { display: block; font-size: 24px; color: var(--text-main); margin-bottom: 1px; font-weight: 900; }
+  .dice-info span { font-size: 12px; color: var(--text-muted); }
   .log-box {
-    flex: 1; overflow-y: auto; font-size: 13px; line-height: 1.6; color: var(--text-main);
-    padding: 12px; background: #faf9fc; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    flex: 1; min-height: 0; overflow-y: auto; font-size: 12px; line-height: 1.5; color: var(--text-main);
+    padding: 10px; background: #faf9fc; border-radius: 7px; border: 1px solid var(--border);
     scrollbar-width: thin; scrollbar-color: #d1cbe6 transparent;
   }
-  .log-box p { margin-bottom: 6px; padding-bottom: 6px; border-bottom: 1px solid #f0edf5; }
+  .log-box p { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #f0edf5; }
   .log-box .lg-gold { color: #d48a00; font-weight: 600; }
   .log-box .lg-red { color: #e04f4f; }
   .log-box .lg-green { color: #2e9e42; }
   .log-box .lg-blue { color: #3b82f6; }
   .log-box .lg-muted { color: var(--text-muted); }
-  .action-bar { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; padding-top: 10px; }
+  .action-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; padding-top: 4px; flex-shrink: 0; }
   .btn {
     background: var(--panel); color: var(--text-main);
     border: 1px solid var(--border); border-radius: 999px;
-    padding: 10px 24px; font-size: 14px; font-weight: 600; font-family: inherit;
-    cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow-sm);
+    padding: 8px 20px; font-size: 13px; font-weight: 600; font-family: inherit;
+    cursor: pointer; transition: all 0.18s; box-shadow: var(--shadow-sm);
     display: flex; align-items: center; justify-content: center;
   }
   .btn:hover:not(:disabled) { background: var(--panel-2); border-color: #d1cbe6; transform: translateY(-1px); }
@@ -147,57 +188,59 @@
   .btn:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
   .btn-primary {
     background: linear-gradient(135deg, #8e7dff 0%, #7b68ee 100%);
-    border: none; color: #fff; box-shadow: 0 4px 12px rgba(123, 104, 238, 0.3);
+    border: none; color: #fff; box-shadow: 0 3px 10px rgba(123, 104, 238, 0.3);
   }
   .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #9f90ff 0%, #8573f5 100%); }
-  .btn-sm { padding: 8px 16px; font-size: 13px; }
-  
+  .btn-sm { padding: 6px 13px; font-size: 12px; }
+
   .modal-mask {
     position: fixed; inset: 0; background: rgba(30, 27, 38, 0.6); backdrop-filter: blur(4px);
     display: flex; align-items: center; justify-content: center; z-index: 100; padding: 20px;
   }
   .modal {
     background: #173b31;
-    border-radius: var(--radius-lg); padding: 12px; width: 480px; max-width: 100%;
+    border-radius: var(--radius-lg); padding: 10px; width: 460px; max-width: 100%;
     box-shadow: var(--shadow-lg); position: relative; transform: translateY(20px); animation: modalIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   }
   @keyframes modalIn { to { transform: translateY(0); opacity: 1; } }
-  .modal-header { color: #a7d5c5; font-size: 13px; font-weight: 600; padding: 0 12px 12px 12px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-  .modal-header::before { content: '●'; color: #5cffb1; font-size: 10px; }
-  .modal-inner { background: #ffffff; border-radius: var(--radius-md); padding: 24px; }
-  .modal h3 { color: var(--text-main); font-size: 20px; margin-bottom: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px;}
-  .modal p { font-size: 15px; line-height: 1.8; color: #4a4754; background: #f8f7fb; padding: 16px; border-radius: var(--radius-sm); border: 1px solid var(--border); }
-  .modal .modal-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 20px; flex-wrap: wrap;}
+  .modal-header { color: #a7d5c5; font-size: 12px; font-weight: 600; padding: 0 10px 10px 10px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+  .modal-header::before { content: '●'; color: #5cffb1; font-size: 9px; }
+  .modal-inner { background: #ffffff; border-radius: var(--radius-md); padding: 20px; }
+  .modal h3 { color: var(--text-main); font-size: 18px; margin-bottom: 12px; font-weight: 800; display: flex; align-items: center; gap: 8px;}
+  .modal p { font-size: 14px; line-height: 1.75; color: #4a4754; background: #f8f7fb; padding: 14px; border-radius: 7px; border: 1px solid var(--border); }
+  .modal .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; flex-wrap: wrap;}
   .modal .btn-primary { background: #173b31; color: #fff; box-shadow: 0 4px 12px rgba(23, 59, 49, 0.3); }
   .modal .btn-primary:hover { background: #1e4f42; }
-  
-  .setup-wrap {
-    width: 600px; max-width: 100%; margin: 60px auto;
-    background: var(--panel); border-radius: var(--radius-lg);
-    padding: 40px; box-shadow: var(--shadow-md); text-align: center;
+
+  .setup-scroll {
+    width: 100%; height: 100%; overflow-y: auto; display: flex; align-items: center; justify-content: center;
   }
-  .setup-wrap h1 { font-size: 32px; color: var(--text-main); letter-spacing: 4px; margin-bottom: 8px; font-weight: 900; }
-  .setup-wrap .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; }
-  
-  .player-count-select { display: flex; justify-content: center; gap: 12px; margin-bottom: 32px; }
-  .player-count-select .btn { width: 60px; height: 60px; border-radius: 50%; font-size: 20px; font-weight: 800; padding: 0; }
-  
-  .setup-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; background: var(--panel-2); padding: 12px 16px; border-radius: var(--radius-md); border: 1px solid var(--border); }
+  .setup-wrap {
+    width: 600px; max-width: 100%; margin: 20px auto;
+    background: var(--panel); border-radius: var(--radius-lg);
+    padding: 36px; box-shadow: var(--shadow-md); text-align: center;
+  }
+  .setup-wrap h1 { font-size: 30px; color: var(--text-main); letter-spacing: 4px; margin-bottom: 8px; font-weight: 900; }
+  .setup-wrap .sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+
+  .player-count-select { display: flex; justify-content: center; gap: 12px; margin-bottom: 28px; }
+  .player-count-select .btn { width: 56px; height: 56px; border-radius: 50%; font-size: 19px; font-weight: 800; padding: 0; }
+
+  .setup-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; background: var(--panel-2); padding: 10px 14px; border-radius: var(--radius-md); border: 1px solid var(--border); }
   .setup-row label { width: 60px; font-size: 14px; font-weight: 600; color: var(--text-main); flex-shrink: 0; text-align: left; }
-  .setup-row input { flex: 1; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; color: var(--text-main); font-family: inherit; font-size: 15px; transition: border 0.2s; }
+  .setup-row input { flex: 1; background: #fff; border: 1px solid var(--border); border-radius: 7px; padding: 10px 14px; color: var(--text-main); font-family: inherit; font-size: 15px; transition: border 0.2s; }
   .setup-row input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
   .setup-row .dot { width: 16px; height: 16px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 8px currentColor; }
-  
-  .setup-actions { margin-top: 32px; }
-  .setup-actions .btn { width: 100%; padding: 16px; font-size: 18px; letter-spacing: 2px; }
-  
-  .hint { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-top: 24px; text-align: left; background: var(--panel-2); padding: 16px; border-radius: var(--radius-md); }
-  
+
+  .setup-actions { margin-top: 28px; }
+  .setup-actions .btn { width: 100%; padding: 15px; font-size: 17px; letter-spacing: 2px; }
+
+  .hint { font-size: 13px; color: var(--text-muted); line-height: 1.8; margin-top: 22px; text-align: left; background: var(--panel-2); padding: 14px; border-radius: var(--radius-md); }
+
   @media(max-width: 1100px) {
     .main { flex-direction: column; }
-    .players-col { width: 100%; flex-direction: row; flex-wrap: wrap; }
-    .player-card { flex: 1 1 180px; }
-    .board-grid { max-width: 100%; }
+    .players-col { width: 100%; flex-direction: row; flex-wrap: wrap; overflow-x: auto; overflow-y: visible; }
+    .player-card { flex: 1 1 140px; }
   }
 </style>
 </head>
@@ -205,15 +248,11 @@
 <div id="app"></div>
 
 <script>
-/* ============================================================
-   彩云国物语 · 官场大富翁
-   ============================================================ */
-
 const START_CASH = 1500;
 const JAIL_TURNS = 2;
 const WIN_RANK_IDX = 15;
 const IMPEACH_COST = 500;
-const BOARD_LEN = 48;
+const BOARD_LEN = 52;
 const JAIL_POS = 12;
 
 function getSalary(rankIdx){
@@ -258,15 +297,17 @@ const BOARD = [
   { type:'prop',    name:'门下省',        sub:'审议诏令',          group:'pink',   price:140, rent:28, desc:'掌审议诏令。旺季任门下省长官，凌晏树任黄门侍郎。贵族派二大巢穴之一。' },
   { type:'prop',    name:'中书省',        sub:'政策立案',          group:'pink',   price:140, rent:28, desc:'担任王室的秘书工作。' },
   { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
+  { type:'prop',    name:'砂恭',          sub:'紫州边境',          group:'sha',    price:130, rent:26, desc:'紫州通往茶州前、靠近州境的最后一座城市，有全商联砂恭分会。砂恭城到夜晚仍十分热闹，往来人潮多。' },
   { type:'rest',    name:'冗官室',        sub:'摸鱼圣地',          group:'rest', desc:'朝廷中未被分配到实职的冗官们聚集的房间。虽经常被上司抓包，但也是个能完美休息、交流八卦的避风港。' },
   { type:'prop',    name:'琥琏',          sub:'茶州州都',          group:'red',    price:110, rent:22, desc:'茶州州都。地处偏远，豪族势力盘根错节，新任州官往往需费一番手脚才能立足。' },
+  { type:'prop',    name:'金华',          sub:'茶州商都',          group:'jin',    price:170, rent:34, desc:'金华是茶州最大的商业都市，是从崔里关进入茶州后通往州都琥琏的重要城市，设有全商联金华特区。' },
   { type:'prop',    name:'虎林郡',        sub:'茶州偏远',          group:'brown',  price:120, rent:24, desc:'茶州偏远地带，曾爆发怪病与邪仙教之乱。此处民风彪悍，也是秀丽与影月、燕青曾奋战过的地方。' },
-  { type:'prop',    name:'西华村',        sub:'黑州山村',          group:'green',  price:100, rent:20, desc:'杜影月的故乡，位于黑州千里山脉山脚，闭塞小山村，村中多为老人。影月四岁时被水镜道寺堂主华真救下，在村中长大。' },
   { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
   { type:'prop',    name:'玉龙',          sub:'蓝州州都',          group:'green',  price:150, rent:30, desc:'蓝州州都。石造家屋如浮水面，桥梁皆具国宝级工艺，水路纵横。蓝州是彩云国最重要的盐产地。' },
   { type:'prop',    name:'九彩江',        sub:'蓝家本宅',          group:'orange', price:180, rent:36, desc:'蓝家本宅所在，传说有彩八仙守护的圣域。蓝家统治蓝州，以产盐闻名，家徽“双龙莲泉”。' },
   { type:'fate',    name:'命运',          sub:'福祸相依',          group:'fate' },
   { type:'prop',    name:'宝镜山',        sub:'缥家神社',          group:'brown',  price:80,  rent:16, desc:'位于九彩江的禁地，缥家神社所在。传说拥有实现愿望的神秘力量，也是封印妖怪的宝镜破碎之处。' },
+  { type:'jail',    name:'御史台·监狱',   sub:'入狱反省',          group:'jail', desc:'御史台下属监狱。被弹劾或巡查拿获的官吏在此反省 2 回合，可缴纳 100 政绩提前出狱。' },
   { type:'prop',    name:'红山',          sub:'红州名山',          group:'teal',   price:140, rent:28, desc:'红州名山。红州是彩云国大粮仓，盛产稻米、煤炭，制铁业发达。' },
   { type:'prop',    name:'梧桐',          sub:'红州州都',          group:'purple', price:200, rent:40, desc:'红州州都。红州是彩云国的粮仓与命脉，盛产稻米，煤炭产量更是全国第一。这里气候温暖，由名门红家统治，家徽为“桐竹凤麟”。州都梧桐作为红家势力范围的核心地带，是红州的政治与行政中心。' },
   { type:'prop',    name:'烦恼寺',        sub:'红州古刹',          group:'pink',   price:90,  rent:18, desc:'红州一带有烦恼寺。燕青曾来调查铁炭；秀丽从缥家“通路”掉出时也落在附近。与缥家旧“通路”、铁炭失踪线索有关，后来成了临时据点。烦恼寺是遍布各地的寺社系列。' },
@@ -280,7 +321,9 @@ const BOARD = [
   { type:'prop',    name:'仙洞宫',        sub:'缥家神器',          group:'teal',   price:120, rent:24, desc:'虽属仙洞省，但与缥家神器“苍”和封印体系直接相关，瑠花与羽羽曾在此执行修复术式。它是由开国君主苍玄为彩八仙建造的宫殿，位于王城之内。传说当有明君出现时，八仙便会聚集于此。' },
   { type:'prop',    name:'归山',          sub:'白州酒乡',          group:'orange', price:90,  rent:18, desc:'白州之地，以制作名产“茅炎白酒”闻名。与黑州并称“武士之家”的白州，酒中也带着一股边地烈性。' },
   { type:'prop',    name:'远游',          sub:'黑州州都',          group:'teal',   price:90,  rent:18, desc:'黑州州都。西北严酷之地，武术门派与山贼并存，与白州互为犄角。' },
+  { type:'prop',    name:'西华村',        sub:'黑州山村',          group:'green',  price:100, rent:20, desc:'杜影月的故乡，位于黑州千里山脉山脚，闭塞小山村，村中多为老人。影月四岁时被水镜道寺堂主华真救下，在村中长大。' },
   { type:'fate',    name:'命运',          sub:'福祸相依',          group:'fate' },
+  { type:'impeach', name:'御史台·弹劾',   sub:'监察百官',          group:'impeach', desc:'御史台是监察百官、弹劾不法之事的机构，长官为御史大夫葵皇毅。走到此处可花费 500 政绩弹劾一名官阶高于自己的同僚，使其降职一级并打入御史台监狱反省 2 回合。' },
   { type:'prop',    name:'芳林门',        sub:'王都城门',          group:'orange', price:140, rent:28, desc:'王都贵阳的城门之一。刘辉雪夜逃离王都时，出了芳林门。' },
   { type:'prop',    name:'五丞原',        sub:'紫州平原',          group:'pink',   price:100, rent:20, desc:'紫州境内、邻近旺季领地的一处平原。屏障紫州平原的诸多高山要塞之前，是刘辉与旺季最终一对一决斗、扭转国家命运的决战舞台。' }
 ];
@@ -348,21 +391,23 @@ const G = { players:[], turn:0, phase:'setup', dice:[0,0], rolling:false, log:[]
 function renderSetupStep1(){
   const app = $('#app');
   app.innerHTML = `
-    <div class="setup-wrap">
-      <h1>彩云国物语 · 官场大富翁</h1>
-      <div class="sub">新科进士从九品入仕 · 八州四省六部</div>
-      <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">请选择游玩人数</div>
-      <div class="player-count-select">
-        <button class="btn" onclick="renderSetupStep2(2)">2</button>
-        <button class="btn" onclick="renderSetupStep2(3)">3</button>
-        <button class="btn" onclick="renderSetupStep2(4)">4</button>
-        <button class="btn btn-primary" onclick="renderSetupStep2(5)">5</button>
-      </div>
-      <div class="hint">
-        初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
-        率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
-        走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
-        光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
+    <div class="setup-scroll">
+      <div class="setup-wrap">
+        <h1>彩云国物语 · 官场大富翁</h1>
+        <div class="sub">新科进士从九品入仕 · 八州四省六部</div>
+        <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px;">请选择游玩人数</div>
+        <div class="player-count-select">
+          <button class="btn" onclick="renderSetupStep2(2)">2</button>
+          <button class="btn" onclick="renderSetupStep2(3)">3</button>
+          <button class="btn" onclick="renderSetupStep2(4)">4</button>
+          <button class="btn btn-primary" onclick="renderSetupStep2(5)">5</button>
+        </div>
+        <div class="hint">
+          初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
+          率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
+          走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
+          光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
+        </div>
       </div>
     </div>`;
 }
@@ -370,22 +415,24 @@ function renderSetupStep1(){
 function renderSetupStep2(count){
   const app = $('#app');
   app.innerHTML = `
-    <div class="setup-wrap">
-      <h1>彩云国物语 · 官场大富翁</h1>
-      <div class="sub">${count} 人局 · 请输入或修改角色名</div>
-      <div id="setup-rows"></div>
-      <div class="setup-actions">
-        <button class="btn" style="margin-bottom:12px; width:100%;" onclick="renderSetupStep1()">返回重选人数</button>
-        <button class="btn btn-primary" id="btn-start">开始游戏</button>
-      </div>
-      <div class="hint">
-        初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
-        率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
-        走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
-        光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
+    <div class="setup-scroll">
+      <div class="setup-wrap">
+        <h1>彩云国物语 · 官场大富翁</h1>
+        <div class="sub">${count} 人局 · 请输入或修改角色名</div>
+        <div id="setup-rows"></div>
+        <div class="setup-actions">
+          <button class="btn" style="margin-bottom:12px; width:100%;" onclick="renderSetupStep1()">返回重选人数</button>
+          <button class="btn btn-primary" id="btn-start">开始游戏</button>
+        </div>
+        <div class="hint">
+          初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
+          率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
+          走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
+          光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
+        </div>
       </div>
     </div>`;
-  
+
   const rows = $('#setup-rows');
   for(let i=0; i<count; i++){
     const row = document.createElement('div');
@@ -393,13 +440,13 @@ function renderSetupStep2(count){
     row.innerHTML = `<span class="dot" style="background:${COLOR_HEX[PLAYER_COLORS[i]]}"></span><label>玩家 ${i+1}</label><input type="text" data-idx="${i}" value="${DEFAULT_NAMES[i] || ''}" placeholder="输入名字" maxlength="10">`;
     rows.appendChild(row);
   }
-  
+
   const inputs = rows.querySelectorAll('input');
   $('#btn-start').onclick = () => {
     const names = [];
-    inputs.forEach((inp,i)=>{ 
-      const v = inp.value.trim(); 
-      if(v) names.push({name: v, color: PLAYER_COLORS[i]}); 
+    inputs.forEach((inp,i)=>{
+      const v = inp.value.trim();
+      if(v) names.push({name: v, color: PLAYER_COLORS[i]});
     });
     if(names.length < count){ alert('名字不能为空，请补全所有玩家名字。'); return; }
     startGame(names);
@@ -424,35 +471,60 @@ function renderGame(){
   const app=$('#app');
   app.innerHTML = `
     <div class="topbar"><div class="title">彩云国物语 · 官场大富翁 <small>八州 · 四省 · 六部</small></div><div class="phase-tag" id="phase-tag">进行中</div></div>
-    <div class="main"><div class="players-col" id="players-col"></div><div class="board-wrap"><div class="board-grid" id="board-grid"></div></div></div>`;
+    <div class="main"><div class="players-col" id="players-col"></div><div class="board-wrap" id="board-wrap"><div class="board-grid" id="board-grid"></div></div></div>`;
   renderBoard(); renderPlayers(); renderLogBox();
+  requestAnimationFrame(fitBoard);
 }
 
+function fitBoard(){
+  const wrap = document.getElementById('board-wrap');
+  const grid = document.getElementById('board-grid');
+  if(!wrap || !grid) return;
+  const availW = wrap.clientWidth - 28;
+  const availH = wrap.clientHeight - 28;
+  const ratio = 16/12;
+  let w = availW;
+  let h = availW / ratio;
+  if(h > availH){ h = availH; w = availH * ratio; }
+  grid.style.width = w + 'px';
+  grid.style.height = h + 'px';
+}
+
+window.addEventListener('resize', fitBoard);
+
 function renderBoard(){
-  const grid=$('#board-grid'); grid.innerHTML='';
+  const grid=$('#board-grid');
+  grid.innerHTML='';
+
   const center=document.createElement('div');
   center.className='center-panel';
-  center.innerHTML=`<div class="dice-area"><div class="die" id="die1">?</div><div class="die" id="die2">?</div><div class="dice-info"><b id="dice-sum">—</b><span id="dice-label">等待掷骰</span></div></div><div class="log-box" id="log-box"></div><div class="action-bar" id="action-bar"></div>`;
-  center.style.gridArea='2 / 2 / 11 / 15'; grid.appendChild(center);
+  center.innerHTML=`
+    <div class="dice-area">
+      <div class="die" id="die1">?</div>
+      <div class="die" id="die2">?</div>
+      <div class="dice-info"><b id="dice-sum">—</b><span id="dice-label">等待掷骰</span></div>
+    </div>
+    <div class="log-box" id="log-box"></div>
+    <div class="action-bar" id="action-bar"></div>`;
+  center.style.gridArea='2 / 2 / 12 / 16';
+  grid.appendChild(center);
 
   const positions=[];
   for(let c=1;c<=15;c++) positions.push({r:1,c});
-  for(let r=2;r<=11;r++) positions.push({r,c:15});
-  for(let c=14;c>=1;c--) positions.push({r:11,c});
-  for(let r=10;r>=2;r--) positions.push({r,c:1});
+  for(let r=1;r<=11;r++) positions.push({r,c:16});
+  for(let c=16;c>=2;c--) positions.push({r:12,c});
+  for(let r2=12;r2>=2;r2--) positions.push({r:r2,c:1});
 
   BOARD.forEach((cellData,idx)=>{
     const pos=positions[idx];
+    if(!pos) return;
     const el=document.createElement('div');
     el.className='cell'; el.dataset.idx=idx;
     el.style.gridArea=`${pos.r} / ${pos.c} / ${pos.r+1} / ${pos.c+1}`;
     el.classList.add('type-'+cellData.type);
     const ownerIdx = findOwner(idx);
     const owner = ownerIdx >= 0 ? G.players[ownerIdx] : null;
-    
-    const tooltip = cellData.desc || cellData.name;
-    el.title = tooltip;
-
+    el.title = cellData.desc || cellData.name;
     el.innerHTML = `
       <div class="c-name">${cellData.name}</div>
       <div class="c-sub">${cellData.sub || ''}</div>
@@ -489,10 +561,10 @@ function renderPlayers(){
     card.className='player-card'+(i===G.turn && G.phase==='playing'?' active':'')+(p.bankrupt?' bankrupt':'');
     const rank=RANKS[p.rankIdx]||'从九品';
     const propNames=p.props.map(idx=>BOARD[idx].name).join('、');
-    
+
     let nextCostInfo = '';
     if (p.rankIdx < WIN_RANK_IDX) {
-      nextCostInfo = `<div style="font-size:11px;color:var(--gold);margin-top:4px;">下一级：${fmt(RANK_COST[p.rankIdx + 1])} 政绩 · 俸禄 ${fmt(getSalary(p.rankIdx))}</div>`;
+      nextCostInfo = `<div class="pc-next">下一级：${fmt(RANK_COST[p.rankIdx + 1])} · 俸禄 ${fmt(getSalary(p.rankIdx))}</div>`;
     }
 
     card.innerHTML=`
@@ -504,8 +576,8 @@ function renderPlayers(){
       <div class="pc-stats"><span>政绩 <b>${fmt(p.cash)}</b></span><span>地产 ${p.props.length}</span></div>
       ${nextCostInfo}
       <div class="pc-props">${propNames||'暂无地产'}</div>
-      ${p.jailTurns>0?`<div style="font-size:12px;color:var(--red);margin-top:8px;font-weight:600;">御史台反省中（剩余${p.jailTurns}回合）</div>`:''}
-      ${p.skipTurns>0?`<div style="font-size:12px;color:var(--red);margin-top:8px;font-weight:600;">本回合无法行动</div>`:''}
+      ${p.jailTurns>0?`<div class="pc-jail">御史台反省中（剩余${p.jailTurns}回合）</div>`:''}
+      ${p.skipTurns>0?`<div class="pc-jail">本回合无法行动</div>`:''}
     `;
     col.appendChild(card);
   });
@@ -535,7 +607,7 @@ function updateUI(){
 function updateActionBar(){
   const bar=$('#action-bar'); if(!bar) return;
   bar.innerHTML='';
-  if(G.phase==='over'){ bar.innerHTML='<span style="color:var(--primary);font-size:15px;font-weight:600;">游戏结束</span>'; return; }
+  if(G.phase==='over'){ bar.innerHTML='<span style="color:var(--primary);font-size:14px;font-weight:600;">游戏结束</span>'; return; }
   const cur=G.players[G.turn];
   if(!cur||cur.bankrupt) return;
 
@@ -578,7 +650,7 @@ function updateActionBar(){
 
   if(cur.jailTurns>0){
     const info=document.createElement('span');
-    info.style.cssText='font-size:12px;color:var(--red);align-self:center;font-weight:600;';
+    info.style.cssText='font-size:11px;color:var(--red);align-self:center;font-weight:600;';
     info.textContent=`御史台反省中（${cur.jailTurns}回合）`;
     bar.appendChild(info);
   }
@@ -629,7 +701,7 @@ function moveCurrentPlayer(steps){
         p.cash += sal;
         addLog(`${p.name} 经过王都贵阳，领取俸禄 ${fmt(sal)} 政绩（${RANKS[p.rankIdx]}）。`,'gold');
         updateUI();
-        
+
         if(p.rankIdx < WIN_RANK_IDX){
           const nextRank = p.rankIdx + 1;
           const cost = RANK_COST[nextRank];
@@ -640,12 +712,12 @@ function moveCurrentPlayer(steps){
                      <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)} · 晋升后俸禄：${fmt(getSalary(nextRank))}）</p>`,
               actions:[
                 {label: '放弃晋升', onClick: () => { closeModal(); settleLanding(p); }},
-                {label: `花费 ${fmt(cost)} 晋升`, primary: true, onClick: () => { 
+                {label: `花费 ${fmt(cost)} 晋升`, primary: true, onClick: () => {
                   closeModal();
                   p.cash -= cost;
                   p.rankIdx = nextRank;
                   addLog(`🎉 ${p.name} 花费 ${fmt(cost)} 政绩打点考绩，晋升为「${RANKS[p.rankIdx]}」！`,'gold');
-                  updateUI(); 
+                  updateUI();
                   if(p.rankIdx >= WIN_RANK_IDX){
                     endGame(p, '官拜正二品·尚书令，成为彩云国实务百官之首');
                   } else {
@@ -793,7 +865,6 @@ function settleLanding(p){
     }
     case 'jail': {
       p.jailTurns = JAIL_TURNS;
-      p.pos = JAIL_POS;
       addLog(`⛓️ ${p.name} 被御史台扣留，入狱反省 ${JAIL_TURNS} 回合。`,'red');
       renderTokens(); updateUI(); advanceTurn();
       break;
@@ -905,7 +976,7 @@ function renderAuctionBar(bar){
   const canAfford=bidder.cash>=minBid;
 
   const info=document.createElement('span');
-  info.style.cssText='font-size:13px;color:var(--primary);align-self:center;margin-right:8px;font-weight:600;';
+  info.style.cssText='font-size:12px;color:var(--primary);align-self:center;margin-right:6px;font-weight:600;';
   info.textContent=`「${cell.name}」当前 ${a.highest?fmt(a.highest)+'（'+G.players[a.highestBidder].name+'）':'无出价'} | 轮到 ${bidder.name}`;
   bar.appendChild(info);
 
@@ -948,7 +1019,7 @@ function drawCard(p,type){
   const card=pick(deck);
   const typeLabel=type==='chance'?'机会':'命运';
   addLog(`📜 ${p.name} 抽到【${typeLabel}】：${card.text}`,type==='chance'?'gold':'red');
-  
+
   showModal({
     title:`📜 ${typeLabel === '机会' ? '宦海际遇' : '福祸相依'}`,
     body:`<div style="font-size:13px;color:#8a8794;margin-bottom:8px;">${p.name} 触发了以下事件：</div>
@@ -1078,9 +1149,9 @@ function endGame(winner, reason){
   showModal({
     title:winner?'🏆 游戏胜利':'游戏结束',
     body:winner
-      ?`<p style="text-align:center;margin-bottom:16px;"><b style="color:var(--primary);font-size:24px;font-weight:900;">${winner.name}</b></p>
+      ?`<p style="text-align:center;margin-bottom:14px;"><b style="color:var(--primary);font-size:22px;font-weight:900;">${winner.name}</b></p>
          <p style="margin:0;">由新科进士起步，历经宦海沉浮，终于位极人臣，官拜<b>正二品·尚书令</b>。</p>
-         <p style="margin-top:12px;color:#8a8794;font-size:14px;">最终政绩：${fmt(winner.cash)} · 官阶：${RANKS[winner.rankIdx]} · 地产：${winner.props.length} 处</p>`
+         <p style="margin-top:12px;color:#8a8794;font-size:13px;">最终政绩：${fmt(winner.cash)} · 官阶：${RANKS[winner.rankIdx]} · 地产：${winner.props.length} 处</p>`
       :'<p style="margin:0;">所有玩家均已破产。</p>',
     actions:[{label:'再来一局',primary:true,onClick:()=>location.reload()}]
   });

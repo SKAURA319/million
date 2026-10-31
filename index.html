@@ -78,19 +78,19 @@
     box-shadow: var(--shadow-md); position: relative;
   }
   .board-grid {
-    display: grid; grid-template-columns: repeat(11, 1fr); grid-template-rows: repeat(11, 1fr);
-    gap: 6px; aspect-ratio: 1/1; max-height: 860px; margin: 0 auto; width: 100%; max-width: 860px;
+    display: grid; grid-template-columns: repeat(15, 1fr); grid-template-rows: repeat(11, 1fr);
+    gap: 6px; aspect-ratio: 15/11; max-height: 720px; margin: 0 auto; width: 100%; max-width: 980px;
   }
   .cell {
     background: var(--panel-2); border: 1px solid var(--border);
-    border-radius: var(--radius-sm); padding: 6px; font-size: 10px; line-height: 1.3;
+    border-radius: var(--radius-sm); padding: 5px; font-size: 10px; line-height: 1.25;
     overflow: hidden; position: relative; display: flex; flex-direction: column;
     transition: all 0.2s; cursor: pointer;
   }
   .cell:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); z-index: 10; border-color: var(--primary-light); }
-  .cell .c-name { font-weight: 700; font-size: 11px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .cell .c-sub { font-size: 9px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
-  .cell .c-price { font-size: 10px; font-weight: 700; color: var(--primary); margin-top: auto; background: var(--primary-light); padding: 2px 4px; border-radius: 4px; align-self: flex-start; }
+  .cell .c-name { font-weight: 700; font-size: 10.5px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .cell .c-sub { font-size: 8.5px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
+  .cell .c-price { font-size: 9.5px; font-weight: 700; color: var(--primary); margin-top: auto; background: var(--primary-light); padding: 2px 4px; border-radius: 4px; align-self: flex-start; }
   .cell.type-start { background: #e8f5e9; border-color: #c8e6c9; }
   .cell.type-chance { background: #fff8e1; border-color: #ffecb3; }
   .cell.type-fate { background: #f3e5f5; border-color: #e1bee7; }
@@ -98,11 +98,11 @@
   .cell.type-impeach { background: #fce4ec; border-color: #f8bbd0; }
   .cell.type-rest { background: #e0f7fa; border-color: #b2ebf2; }
   .cell.type-tax { background: #fbe9e7; border-color: #ffccbc; }
-  .cell .c-owner-bar { height: 6px; border-radius: 999px; margin-top: 4px; background: #e0e0e0; width: 80%; }
-  .cell .c-tokens { position: absolute; right: 6px; bottom: 6px; display: flex; gap: 3px; flex-wrap: wrap; justify-content: flex-end; max-width: 80%; }
-  .token { width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+  .cell .c-owner-bar { height: 5px; border-radius: 999px; margin-top: 3px; background: #e0e0e0; width: 80%; }
+  .cell .c-tokens { position: absolute; right: 4px; bottom: 4px; display: flex; gap: 2px; flex-wrap: wrap; justify-content: flex-end; max-width: 80%; }
+  .token { width: 9px; height: 9px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
   .center-panel {
-    grid-column: 2/11; grid-row: 2/11;
+    grid-column: 2/15; grid-row: 2/11;
     background: #fdfcff; border: 2px dashed var(--border); border-radius: var(--radius-md);
     display: flex; flex-direction: column; padding: 20px; gap: 16px; overflow: hidden;
   }
@@ -209,13 +209,19 @@
    彩云国物语 · 官场大富翁
    ============================================================ */
 
-const START_CASH = 1200;
-const SALARY = 200;
+const START_CASH = 1500;
 const JAIL_TURNS = 2;
 const WIN_RANK_IDX = 15;
-const IMPEACH_COST = 1000;
+const IMPEACH_COST = 500;
+const BOARD_LEN = 48;
+const JAIL_POS = 12;
 
-const RANK_COST = [0, 600, 1200, 2000, 3000, 4200, 5800, 7800, 10000, 13000, 16500, 21000, 26000, 32000, 40000, 50000];
+function getSalary(rankIdx){
+  const pin = 9 - Math.floor(rankIdx / 2);
+  return 150 + (9 - pin) * 50;
+}
+
+const RANK_COST = [0, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000];
 
 const RANKS = [
   '从九品', '正九品', '从八品', '正八品', '从七品', '正七品',
@@ -230,20 +236,24 @@ const DEFAULT_NAMES = ['红秀丽', '紫刘辉', '茈静兰', '蓝楸瑛', '李�
 
 const BOARD = [
   { type:'start',   name:'王都·贵阳',     sub:'紫州王都',          group:'special', desc:'紫州王都，百官入朝之地。经过或停留可领俸禄，并可花费政绩考绩升官。' },
+  { type:'prop',    name:'邵可府',        sub:'红家宅邸',          group:'home',   price:110, rent:22, desc:'红邵可在王都贵阳的朴素宅邸，也是秀丽、静兰在贵阳的家，带庭院菜地。' },
+  { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
   { type:'prop',    name:'彩七区',        sub:'七家别宅',          group:'purple', price:160, rent:32, desc:'贵阳彩七家之别宅所在地区，权贵云集之地。' },
+  { type:'prop',    name:'后宫',          sub:'紫州内廷',          group:'blue',   price:130, rent:26, desc:'王都贵阳城内，国王妃嫔、女官、侍官生活与办公的区域。刘辉从小在这里长大。' },
   { type:'chance',  name:'吏部',          sub:'文官人事',          group:'chance', desc:'掌文官人事。红黎深曾任吏部尚书，李绛攸曾任吏部侍郎；后杨修以侍郎代理尚书。' },
   { type:'rest',    name:'冗官室',        sub:'闲置官吏',          group:'rest', desc:'朝廷中未被分配到实职的冗官们聚集的房间。虽然吵闹且常发生各种麻烦，但也是个能打听到各种小道消息、喝茶摸鱼的好去处。' },
-  { type:'tax',     name:'户部·赋税',     sub:'天下钱粮',          group:'tax', desc:'需向户部缴纳天下钱粮赋税 100 政绩。户部尚书为黄凤珠，常年以面具示人，人称“黄奇人”。' },
-  { type:'impeach', name:'御史台·弹劾',   sub:'监察百官',          group:'impeach', desc:'御史台是监察百官、弹劾不法之事的机构，长官为御史大夫葵皇毅。走到此处可花费 1000 政绩弹劾一名官阶高于自己的同僚，使其降职一级并打入御史台监狱反省 2 回合。' },
+  { type:'tax',     name:'户部·赋税',     sub:'天下钱粮',          group:'tax', desc:'需向户部缴纳天下钱粮赋税 80 政绩。户部尚书为黄凤珠，常年以面具示人，人称“黄奇人”。' },
+  { type:'impeach', name:'御史台·弹劾',   sub:'监察百官',          group:'impeach', desc:'御史台是监察百官、弹劾不法之事的机构，长官为御史大夫葵皇毅。走到此处可花费 500 政绩弹劾一名官阶高于自己的同僚，使其降职一级并打入御史台监狱反省 2 回合。' },
   { type:'fate',    name:'命运',          sub:'福祸相依',          group:'fate' },
   { type:'prop',    name:'禁军',          sub:'羽林军驻所',        group:'green',  price:150, rent:30, desc:'掌王都宿卫，负责保卫皇城与王的安全。蓝楸瑛曾任羽林军将军，是军中精锐所在。' },
   { type:'prop',    name:'仙洞省',        sub:'天文历法',          group:'teal',   price:150, rent:30, desc:'掌仙学、天文、历法、气象、占星。长官仙洞令君须由缥家成员担任，现任为缥璃樱（小），次官羽羽。' },
   { type:'jail',    name:'御史台·监狱',   sub:'入狱反省',          group:'jail', desc:'御史台下属监狱。被弹劾或巡查拿获的官吏在此反省 2 回合，可缴纳 100 政绩提前出狱。' },
+  { type:'prop',    name:'西施桥',        sub:'贵阳名胜',          group:'bridge', price:120, rent:24, desc:'贵阳名胜，横跨松涛河。松涛河会定时经水门放水、使水位升降，桥下桥堰一带因此十分危险。苏芳曾按“情书”里的约会提示跑到桥堰等秀丽，恰逢放水被冲走；胡蝶也提过与“桥堰约会、涨水溺死”有关的典故。' },
   { type:'chance',  name:'兵部',          sub:'掌军队',            group:'chance', desc:'掌军队。孙陵王任兵部尚书；孟侍郎被暗杀后，由隼（司马迅）接任兵部侍郎。' },
   { type:'prop',    name:'尚书省',        sub:'统领六部',          group:'purple', price:180, rent:36, desc:'统领六部，尚书令为百官实务之首，正二品。郑悠舜任尚书令。' },
-  { type:'tax',     name:'礼部·贡赋',     sub:'国试外交',          group:'tax', desc:'掌国试与外交。蔡尚书被撤职后，由鲁尚书接任礼部尚书。国试相关贡赋亦由礼部统筹征收，需缴纳 100 政绩。' },
+  { type:'tax',     name:'礼部·贡赋',     sub:'国试外交',          group:'tax', desc:'掌国试与外交。蔡尚书被撤职后，由鲁尚书接任礼部尚书。国试相关贡赋亦由礼部统筹征收，需缴纳 80 政绩。' },
   { type:'chance',  name:'工部',          sub:'工程医疗',          group:'chance', desc:'掌土木、医疗等工程事务。管飞翔任工部尚书，欧阳玉任工部侍郎，二人号称“六部中最恶的尚书与侍郎”。' },
-  { type:'tax',     name:'刑部·罚金',     sub:'刑罚',              group:'tax', desc:'掌刑罚。来俊臣任刑部尚书。需缴纳罚金 120 政绩。' },
+  { type:'tax',     name:'刑部·罚金',     sub:'刑罚',              group:'tax', desc:'掌刑罚。来俊臣任刑部尚书。需缴纳罚金 100 政绩。' },
   { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
   { type:'prop',    name:'门下省',        sub:'审议诏令',          group:'pink',   price:140, rent:28, desc:'掌审议诏令。旺季任门下省长官，凌晏树任黄门侍郎。贵族派二大巢穴之一。' },
   { type:'prop',    name:'中书省',        sub:'政策立案',          group:'pink',   price:140, rent:28, desc:'担任王室的秘书工作。' },
@@ -251,6 +261,7 @@ const BOARD = [
   { type:'rest',    name:'冗官室',        sub:'摸鱼圣地',          group:'rest', desc:'朝廷中未被分配到实职的冗官们聚集的房间。虽经常被上司抓包，但也是个能完美休息、交流八卦的避风港。' },
   { type:'prop',    name:'琥琏',          sub:'茶州州都',          group:'red',    price:110, rent:22, desc:'茶州州都。地处偏远，豪族势力盘根错节，新任州官往往需费一番手脚才能立足。' },
   { type:'prop',    name:'虎林郡',        sub:'茶州偏远',          group:'brown',  price:120, rent:24, desc:'茶州偏远地带，曾爆发怪病与邪仙教之乱。此处民风彪悍，也是秀丽与影月、燕青曾奋战过的地方。' },
+  { type:'prop',    name:'西华村',        sub:'黑州山村',          group:'green',  price:100, rent:20, desc:'杜影月的故乡，位于黑州千里山脉山脚，闭塞小山村，村中多为老人。影月四岁时被水镜道寺堂主华真救下，在村中长大。' },
   { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
   { type:'prop',    name:'玉龙',          sub:'蓝州州都',          group:'green',  price:150, rent:30, desc:'蓝州州都。石造家屋如浮水面，桥梁皆具国宝级工艺，水路纵横。蓝州是彩云国最重要的盐产地。' },
   { type:'prop',    name:'九彩江',        sub:'蓝家本宅',          group:'orange', price:180, rent:36, desc:'蓝家本宅所在，传说有彩八仙守护的圣域。蓝家统治蓝州，以产盐闻名，家徽“双龙莲泉”。' },
@@ -258,16 +269,19 @@ const BOARD = [
   { type:'prop',    name:'宝镜山',        sub:'缥家神社',          group:'brown',  price:80,  rent:16, desc:'位于九彩江的禁地，缥家神社所在。传说拥有实现愿望的神秘力量，也是封印妖怪的宝镜破碎之处。' },
   { type:'prop',    name:'红山',          sub:'红州名山',          group:'teal',   price:140, rent:28, desc:'红州名山。红州是彩云国大粮仓，盛产稻米、煤炭，制铁业发达。' },
   { type:'prop',    name:'梧桐',          sub:'红州州都',          group:'purple', price:200, rent:40, desc:'红州州都。红州是彩云国的粮仓与命脉，盛产稻米，煤炭产量更是全国第一。这里气候温暖，由名门红家统治，家徽为“桐竹凤麟”。州都梧桐作为红家势力范围的核心地带，是红州的政治与行政中心。' },
+  { type:'prop',    name:'烦恼寺',        sub:'红州古刹',          group:'pink',   price:90,  rent:18, desc:'红州一带有烦恼寺。燕青曾来调查铁炭；秀丽从缥家“通路”掉出时也落在附近。与缥家旧“通路”、铁炭失踪线索有关，后来成了临时据点。烦恼寺是遍布各地的寺社系列。' },
   { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
-  { type:'prop',    name:'鹿鸣山',        sub:'红州古刹',          group:'pink',   price:90,  rent:18, desc:'红州名山，山中有千年古刹江青寺。缥家系大社寺系列的道寺，拥有广阔的山林田产，享有治外法权，平时极度封闭。' },
-  { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
+  { type:'prop',    name:'时光之牢',      sub:'缥家牢狱',          group:'void',   price:160, rent:32, desc:'缥家深处一处会侵蚀精神、使人逐渐变“空”的异质牢狱。珠翠曾被关押于此，瑠花幼年也曾被幽禁其中。', effect:'精神侵蚀' },
   { type:'fate',    name:'命运',          sub:'福祸相依',          group:'fate' },
   { type:'prop',    name:'碧州州府',      sub:'艺术之州',          group:'blue',   price:100, rent:20, desc:'彩云国艺术中心，以工艺和美术闻名，是八州中最小的州之一。碧家统治地。' },
+  { type:'prop',    name:'幽门石窟',      sub:'碧州神域',          group:'brown',  price:120, rent:24, desc:'碧州神域中的地点，供奉神器“羿之神弓”。' },
   { type:'chance',  name:'机会',          sub:'宦海际遇',          group:'chance' },
   { type:'prop',    name:'黄州州府',      sub:'商业枢纽',          group:'green',  price:100, rent:20, desc:'位于东北部的商业之都，亦是全国商业联合组织“全商联”的发源地。与碧州同为面积最小的州，作为连接各州的商队往来要冲，其经济实力可与贵阳比肩。' },
   { type:'prop',    name:'仙洞宫',        sub:'缥家神器',          group:'teal',   price:120, rent:24, desc:'虽属仙洞省，但与缥家神器“苍”和封印体系直接相关，瑠花与羽羽曾在此执行修复术式。它是由开国君主苍玄为彩八仙建造的宫殿，位于王城之内。传说当有明君出现时，八仙便会聚集于此。' },
   { type:'prop',    name:'归山',          sub:'白州酒乡',          group:'orange', price:90,  rent:18, desc:'白州之地，以制作名产“茅炎白酒”闻名。与黑州并称“武士之家”的白州，酒中也带着一股边地烈性。' },
   { type:'prop',    name:'远游',          sub:'黑州州都',          group:'teal',   price:90,  rent:18, desc:'黑州州都。西北严酷之地，武术门派与山贼并存，与白州互为犄角。' },
+  { type:'fate',    name:'命运',          sub:'福祸相依',          group:'fate' },
+  { type:'prop',    name:'芳林门',        sub:'王都城门',          group:'orange', price:140, rent:28, desc:'王都贵阳的城门之一。刘辉雪夜逃离王都时，出了芳林门。' },
   { type:'prop',    name:'五丞原',        sub:'紫州平原',          group:'pink',   price:100, rent:20, desc:'紫州境内、邻近旺季领地的一处平原。屏障紫州平原的诸多高山要塞之前，是刘辉与旺季最终一对一决斗、扭转国家命运的决战舞台。' }
 ];
 
@@ -275,27 +289,27 @@ const GROUP_SIZES = {};
 BOARD.forEach(c => { if (c.type === 'prop') GROUP_SIZES[c.group] = (GROUP_SIZES[c.group] || 0) + 1; });
 
 const CHANCE_CARDS = [
-  { text:'你被授予官职，赴吏部报到。李绛攸看你忙不过来，出言指点了几句。政绩 +150。', cash:150 },
-  { text:'【秀丽的人脉】红秀丽调查赝品案，你偶然帮她跑了一趟腿。事后她特意来道谢，你因此认识了尚书红黎深。政绩 +100。', cash:100 },
-  { text:'【影月指点】你在茶州执行公务时与杜影月有一面之缘。他温和地指出你公文里的疏漏，你避免了一次大错。政绩 +90。', cash:90 },
-  { text:'【偶遇蓝楸瑛】你替同僚值班，偶然遇到外出巡查的蓝楸瑛。他看你顺眼，在刘辉面前顺嘴提了你一句。政绩 +120。', cash:120 },
-  { text:'【燕青的纸条】你接到调令赴地方。临行前，燕青塞给你一张纸条，上面歪歪扭扭写着当地豪族的弱点和把柄。政绩 +140。', cash:140 },
-  { text:'【悠舜的肯定】你被抽调去做宰相会议书记员。你整理的文件条理清晰，散会后尚书令郑悠舜微笑着拍了拍你的肩。政绩 +110。', cash:110 },
-  { text:'【府库里的闲聊】你在府库借阅卷宗，遇到红邵可。他请你喝了杯茶，还教你如何从文书里发现隐藏的账目猫腻。政绩 +80。', cash:80 },
-  { text:'【黄尚书的恩赐】你去户部报销，虽然没见到黄凤珠的脸，但他大笔一挥，不仅秒批了经费，还多拨了一笔。政绩 +130。', cash:130 },
-  { text:'【晏树的桃子】你在回廊遇到凌晏树，他笑眯眯地给了你一个桃子。你帮他削好，他顺便告诉了你一个朝廷内部的人事调动小道消息。政绩 +70。', cash:70 },
-  { text:'【陆清雅的提点】陆清雅看似漫不经心地点出了你计划里的一个漏洞。虽然他那副高傲的样子很欠揍，但你确实避免了大错。政绩 +80。', cash:80 },
-  { text:'【秀丽教必胜法】你被繁杂的文书淹没，红秀丽路过，教了你一套快速整理公文的必胜法。政绩 +100。', cash:100 },
-  { text:'【老官吏的传授】你在姮娥楼偶遇一位退隐的老官吏，酒过三巡，他传授了你几招明哲保身的官场技巧。政绩 +120。', cash:120 },
-  { text:'【小璃樱的占卜】仙洞省的羽羽大人虽然没追着刘辉跑，但顺路的小璃樱给你算了一卦，告诉你“今天往西走有大吉”。你照做，果然捡到了案子线索。政绩 +50。', cash:50 },
-  { text:'【香铃的心事】你在宫中偶遇香铃，她正为影月的事情发愁。你开导了她，她感激地送了你一些宫中的珍贵点心。政绩 +80。', cash:80 },
-  { text:'【十三姬的烦恼】你撞见十三姬独自在庭院里踱步，为自身的联姻使命而焦虑。你以朋友的身份陪她聊了很久，她非常感激。政绩 +90。', cash:90 },
-  { text:'【首席女官的指点】你在后宫被繁杂的文书搞得焦头烂额，新任首席女官十三姬见状，用她武人般快刀斩乱麻的作风帮你理顺了所有卷宗。政绩 +90。', cash:90 },
-  { text:'【胡蝶的账本】你去姮娥楼办事，遇到了正准备换工作的胡蝶。她拉着你喝了几杯，顺便帮你理清了复杂的人情账目。政绩 +110。', cash:110 },
-  { text:'【克洵的特产】你在茶州执行公务时遇到了克洵。他虽然有些慌乱，但还是尽力帮你处理了当地的琐事，临走还硬塞给你一些土特产。政绩 +70。', cash:70 },
-  { text:'【国试的余荫】你偶然指点了一位正在备考国试的穷苦书生，几个月后他金榜题名，成了你的好帮手。政绩 +80。', cash:80 },
-  { text:'【大宗交易】你促成了一次黄州与红州的商贸合作，虽然中间跑断了腿，但最终拿到了丰厚的分成。政绩 +150。', cash:150 },
-  { text:'【珠翠的二胡】珠翠守在廊下，只轻轻点了一下头。你请她拉一段二胡，琴声缓缓响起，心情也跟着松快了许多。政绩 +40。', cash:40 }
+  { text:'你被授予官职，赴吏部报到。李绛攸看你忙不过来，出言指点了几句。政绩 +200。', cash:200 },
+  { text:'【秀丽的人脉】红秀丽调查赝品案，你偶然帮她跑了一趟腿。事后她特意来道谢，你因此认识了尚书红黎深。政绩 +150。', cash:150 },
+  { text:'【影月指点】你在茶州执行公务时与杜影月有一面之缘。他温和地指出你公文里的疏漏，你避免了一次大错。政绩 +140。', cash:140 },
+  { text:'【偶遇蓝楸瑛】你替同僚值班，偶然遇到外出巡查的蓝楸瑛。他看你顺眼，在刘辉面前顺嘴提了你一句。政绩 +170。', cash:170 },
+  { text:'【燕青的纸条】你接到调令赴地方。临行前，燕青塞给你一张纸条，上面歪歪扭扭写着当地豪族的弱点和把柄。政绩 +190。', cash:190 },
+  { text:'【悠舜的肯定】你被抽调去做宰相会议书记员。你整理的文件条理清晰，散会后尚书令郑悠舜微笑着拍了拍你的肩。政绩 +160。', cash:160 },
+  { text:'【府库里的闲聊】你在府库借阅卷宗，遇到红邵可。他请你喝了杯茶，还教你如何从文书里发现隐藏的账目猫腻。政绩 +130。', cash:130 },
+  { text:'【黄尚书的恩赐】你去户部报销，虽然没见到黄凤珠的脸，但他大笔一挥，不仅秒批了经费，还多拨了一笔。政绩 +180。', cash:180 },
+  { text:'【晏树的桃子】你在回廊遇到凌晏树，他笑眯眯地给了你一个桃子。你帮他削好，他顺便告诉了你一个朝廷内部的人事调动小道消息。政绩 +120。', cash:120 },
+  { text:'【陆清雅的提点】陆清雅看似漫不经心地点出了你计划里的一个漏洞。虽然他那副高傲的样子很欠揍，但你确实避免了大错。政绩 +130。', cash:130 },
+  { text:'【秀丽教必胜法】你被繁杂的文书淹没，红秀丽路过，教了你一套快速整理公文的必胜法。政绩 +150。', cash:150 },
+  { text:'【老官吏的传授】你在姮娥楼偶遇一位退隐的老官吏，酒过三巡，他传授了你几招明哲保身的官场技巧。政绩 +170。', cash:170 },
+  { text:'【小璃樱的占卜】仙洞省的羽羽大人虽然没追着刘辉跑，但顺路的小璃樱给你算了一卦，告诉你“今天往西走有大吉”。你照做，果然捡到了案子线索。政绩 +100。', cash:100 },
+  { text:'【香铃的心事】你在宫中偶遇香铃，她正为影月的事情发愁。你开导了她，她感激地送了你一些宫中的珍贵点心。政绩 +130。', cash:130 },
+  { text:'【十三姬的烦恼】你撞见十三姬独自在庭院里踱步，为自身的联姻使命而焦虑。你以朋友的身份陪她聊了很久，她非常感激。政绩 +140。', cash:140 },
+  { text:'【首席女官的指点】你在后宫被繁杂的文书搞得焦头烂额，新任首席女官十三姬见状，用她武人般快刀斩乱麻的作风帮你理顺了所有卷宗。政绩 +140。', cash:140 },
+  { text:'【胡蝶的账本】你去姮娥楼办事，遇到了正准备换工作的胡蝶。她拉着你喝了几杯，顺便帮你理清了复杂的人情账目。政绩 +160。', cash:160 },
+  { text:'【克洵的特产】你在茶州执行公务时遇到了克洵。他虽然有些慌乱，但还是尽力帮你处理了当地的琐事，临走还硬塞给你一些土特产。政绩 +120。', cash:120 },
+  { text:'【国试的余荫】你偶然指点了一位正在备考国试的穷苦书生，几个月后他金榜题名，成了你的好帮手。政绩 +130。', cash:130 },
+  { text:'【大宗交易】你促成了一次黄州与红州的商贸合作，虽然中间跑断了腿，但最终拿到了丰厚的分成。政绩 +200。', cash:200 },
+  { text:'【珠翠的二胡】珠翠守在廊下，只轻轻点了一下头。你请她拉一段二胡，琴声缓缓响起，心情也跟着松快了许多。政绩 +90。', cash:90 }
 ];
 
 const FATE_CARDS = [
@@ -345,9 +359,10 @@ function renderSetupStep1(){
         <button class="btn btn-primary" onclick="renderSetupStep2(5)">5</button>
       </div>
       <div class="hint">
-        初始政绩 1,200 · 经过起点领 200 俸禄，并可花费政绩考绩升官<br>
+        初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
         率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
-        走到「御史台·弹劾」可花费 1000 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。
+        走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
+        光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
       </div>
     </div>`;
 }
@@ -364,9 +379,10 @@ function renderSetupStep2(count){
         <button class="btn btn-primary" id="btn-start">开始游戏</button>
       </div>
       <div class="hint">
-        初始政绩 1,200 · 经过起点领 200 俸禄，并可花费政绩考绩升官<br>
+        初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
         率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
-        走到「御史台·弹劾」可花费 1000 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。
+        走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
+        光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
       </div>
     </div>`;
   
@@ -417,12 +433,12 @@ function renderBoard(){
   const center=document.createElement('div');
   center.className='center-panel';
   center.innerHTML=`<div class="dice-area"><div class="die" id="die1">?</div><div class="die" id="die2">?</div><div class="dice-info"><b id="dice-sum">—</b><span id="dice-label">等待掷骰</span></div></div><div class="log-box" id="log-box"></div><div class="action-bar" id="action-bar"></div>`;
-  center.style.gridArea='2 / 2 / 11 / 11'; grid.appendChild(center);
+  center.style.gridArea='2 / 2 / 11 / 15'; grid.appendChild(center);
 
   const positions=[];
-  for(let c=1;c<=11;c++) positions.push({r:1,c});
-  for(let r=2;r<=11;r++) positions.push({r,c:11});
-  for(let c=10;c>=1;c--) positions.push({r:11,c});
+  for(let c=1;c<=15;c++) positions.push({r:1,c});
+  for(let r=2;r<=11;r++) positions.push({r,c:15});
+  for(let c=14;c>=1;c--) positions.push({r:11,c});
   for(let r=10;r>=2;r--) positions.push({r,c:1});
 
   BOARD.forEach((cellData,idx)=>{
@@ -476,7 +492,7 @@ function renderPlayers(){
     
     let nextCostInfo = '';
     if (p.rankIdx < WIN_RANK_IDX) {
-      nextCostInfo = `<div style="font-size:11px;color:var(--gold);margin-top:4px;">下一级：${fmt(RANK_COST[p.rankIdx + 1])} 政绩</div>`;
+      nextCostInfo = `<div style="font-size:11px;color:var(--gold);margin-top:4px;">下一级：${fmt(RANK_COST[p.rankIdx + 1])} 政绩 · 俸禄 ${fmt(getSalary(p.rankIdx))}</div>`;
     }
 
     card.innerHTML=`
@@ -597,9 +613,9 @@ function moveCurrentPlayer(steps){
   if(!p||p.bankrupt){ advanceTurn(); return; }
   const oldPos=p.pos;
   let passedStart=false;
-  let newPos=(p.pos+steps)%40;
-  if(newPos<0) newPos+=40;
-  if(steps>0 && (oldPos+steps)>=40) passedStart=true;
+  let newPos=(p.pos+steps)%BOARD_LEN;
+  if(newPos<0) newPos+=BOARD_LEN;
+  if(steps>0 && (oldPos+steps)>=BOARD_LEN) passedStart=true;
 
   let cur=oldPos;
   let remaining=Math.abs(steps);
@@ -609,8 +625,9 @@ function moveCurrentPlayer(steps){
     if(remaining<=0){
       p.pos=newPos; renderTokens();
       if(passedStart && steps>0){
-        p.cash+=SALARY;
-        addLog(`${p.name} 经过王都贵阳，领取俸禄 ${fmt(SALARY)} 政绩。`,'gold');
+        const sal = getSalary(p.rankIdx);
+        p.cash += sal;
+        addLog(`${p.name} 经过王都贵阳，领取俸禄 ${fmt(sal)} 政绩（${RANKS[p.rankIdx]}）。`,'gold');
         updateUI();
         
         if(p.rankIdx < WIN_RANK_IDX){
@@ -620,7 +637,7 @@ function moveCurrentPlayer(steps){
             showModal({
               title: '🏯 考绩晋升',
               body: `<p>${p.name} 经过王都贵阳，可以花费 <b>${fmt(cost)}</b> 政绩进行考绩，晋升为「${RANKS[nextRank]}」。</p>
-                     <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)}）</p>`,
+                     <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)} · 晋升后俸禄：${fmt(getSalary(nextRank))}）</p>`,
               actions:[
                 {label: '放弃晋升', onClick: () => { closeModal(); settleLanding(p); }},
                 {label: `花费 ${fmt(cost)} 晋升`, primary: true, onClick: () => { 
@@ -648,8 +665,8 @@ function moveCurrentPlayer(steps){
       return;
     }
     cur+=dir;
-    if(cur<0) cur=39;
-    if(cur>39) cur=0;
+    if(cur<0) cur=BOARD_LEN-1;
+    if(cur>=BOARD_LEN) cur=0;
     p.pos=cur; renderTokens();
     remaining--;
     setTimeout(walk,95);
@@ -727,7 +744,7 @@ function settleLanding(p){
             } else {
               p.skipTurns = 1;
               addLog(`${p.name} 掷出 ${d}，醉倒在地，后退 1 格并错过下一轮。`,'red');
-              p.pos = (p.pos - 1 + 40) % 40;
+              p.pos = (p.pos - 1 + BOARD_LEN) % BOARD_LEN;
               renderTokens(); updateUI(); advanceTurn();
             }
           }}]
@@ -740,7 +757,7 @@ function settleLanding(p){
     case 'fate':
       drawCard(p,'fate'); break;
     case 'tax':{
-      const amount=cell.name.includes('罚金')?120:100;
+      const amount=cell.name.includes('罚金')?100:80;
       addLog(`${p.name} 需缴纳${cell.name} ${fmt(amount)} 政绩。`,'red');
       chargePlayer(p,amount,()=>advanceTurn());
       break;
@@ -776,7 +793,7 @@ function settleLanding(p){
     }
     case 'jail': {
       p.jailTurns = JAIL_TURNS;
-      p.pos = 9;
+      p.pos = JAIL_POS;
       addLog(`⛓️ ${p.name} 被御史台扣留，入狱反省 ${JAIL_TURNS} 回合。`,'red');
       renderTokens(); updateUI(); advanceTurn();
       break;
@@ -792,7 +809,7 @@ function doImpeachAtJail(cur, target){
   cur.cash -= IMPEACH_COST;
   target.rankIdx = Math.max(0, target.rankIdx - 1);
   target.jailTurns = JAIL_TURNS;
-  target.pos = 9;
+  target.pos = JAIL_POS;
 
   addLog(`⚔️ ${cur.name} 在御史台花费 ${fmt(IMPEACH_COST)} 政绩，弹劾了 ${target.name}！`,'red');
   addLog(`📉 ${target.name} 被查出“行事不谨”，降职为「${RANKS[target.rankIdx]}」，并被打入御史台监狱反省 ${JAIL_TURNS} 回合！`,'red');
@@ -823,9 +840,9 @@ function handleProperty(p,idx){
   }
 
   const owner=G.players[ownerIdx];
-  let rent=cell.rent;
+  let rent=cell.rent * 4;
   const groupCells=BOARD.map((c,i)=>(c.type==='prop'&&c.group===cell.group)?i:-1).filter(i=>i>=0);
-  const ownerHasAll=groupCells.every(i=>owner.props.includes(i));
+  const ownerHasAll=groupCells.length>=2 && groupCells.every(i=>owner.props.includes(i));
   if(ownerHasAll) rent*=2;
   const rankBonus=1+owner.rankIdx*0.05;
   rent=Math.round(rent*rankBonus);
@@ -857,7 +874,7 @@ function startAuction(idx){
     advanceTurn(); return;
   }
   G.auction={ cellIndex:idx, active:eligible.map(p=>p.id), currentBidder:0, highest:0, highestBidder:null, passed:[] };
-  addLog(`🔨 「${cell.name}」进入拍卖，起拍价 10 政绩。`,'gold');
+  addLog(`🔨 「${cell.name}」进入拍卖，起拍价 50 政绩。`,'gold');
   updateUI();
 }
 
@@ -884,7 +901,7 @@ function renderAuctionBar(bar){
     bidder=G.players[a.currentBidder]; guard++;
   }
 
-  const minBid=a.highest===0?10:a.highest+10;
+  const minBid=a.highest===0?50:a.highest+50;
   const canAfford=bidder.cash>=minBid;
 
   const info=document.createElement('span');
@@ -948,14 +965,14 @@ function applyCard(p,card){
   }
   if(card.move!==undefined){
     addLog(`${p.name} 因事件移动 ${card.move>0?'前进':'后退'} ${Math.abs(card.move)} 格。`,'blue');
-    let newPos=(p.pos+card.move)%40;
-    if(newPos<0) newPos+=40;
+    let newPos=(p.pos+card.move)%BOARD_LEN;
+    if(newPos<0) newPos+=BOARD_LEN;
     p.pos=newPos; renderTokens(); updateUI();
     setTimeout(()=>settleLanding(p),200);
     return;
   }
   if(card.gotoJail){
-    p.jailTurns=JAIL_TURNS; p.pos=9;
+    p.jailTurns=JAIL_TURNS; p.pos=JAIL_POS;
     addLog(`⛓️ ${p.name} 被押入御史台反省 ${JAIL_TURNS} 回合。`,'red');
     renderTokens(); updateUI(); advanceTurn(); return;
   }
@@ -1045,7 +1062,7 @@ function advanceTurn(){
 function endGame(winner, reason){
   G.phase='over'; updateUI();
   if(winner){
-    addLog(`🏆 ${winner.name} ${reason || '位极人臣，官拜正二品，成为彩云国实务百官之首'}！`,'gold');
+    addLog(`🏆 ${winner.name} ${reason || '官拜正二品·尚书令，成为彩云国实务百官之首'}！`,'gold');
   }else{
     addLog('游戏结束。','gold');
   }

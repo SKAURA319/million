@@ -257,7 +257,7 @@ const JAIL_POS = 12;
 
 function getSalary(rankIdx){
   const pin = 9 - Math.floor(rankIdx / 2);
-  return 150 + (9 - pin) * 50;
+  return 200 + (9 - pin) * 60;
 }
 
 const RANK_COST = [0, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700, 750, 800, 900, 1000];
@@ -332,7 +332,7 @@ const GROUP_SIZES = {};
 BOARD.forEach(c => { if (c.type === 'prop') GROUP_SIZES[c.group] = (GROUP_SIZES[c.group] || 0) + 1; });
 
 const CHANCE_CARDS = [
-  { text:'你被授予官职，赴吏部报到。李绛攸看你忙不过来，出言指点了几句。政绩 +200。', cash:200 },
+  { text:'【吏部报到】你被授予官职，赴吏部报到。李绛攸看你忙不过来，出言指点了几句。政绩 +200。', cash:200 },
   { text:'【秀丽的人脉】红秀丽调查赝品案，你偶然帮她跑了一趟腿。事后她特意来道谢，你因此认识了尚书红黎深。政绩 +150。', cash:150 },
   { text:'【影月指点】你在茶州执行公务时与杜影月有一面之缘。他温和地指出你公文里的疏漏，你避免了一次大错。政绩 +140。', cash:140 },
   { text:'【偶遇蓝楸瑛】你替同僚值班，偶然遇到外出巡查的蓝楸瑛。他看你顺眼，在刘辉面前顺嘴提了你一句。政绩 +170。', cash:170 },
@@ -355,28 +355,30 @@ const CHANCE_CARDS = [
   { text:'【珠翠的二胡】珠翠守在廊下，只轻轻点了一下头。你请她拉一段二胡，琴声缓缓响起，心情也跟着松快了许多。政绩 +90。', cash:90 },
   { text:'【白雷炎的操练】白雷炎把你拉去观摩羽林军操练，还让你站在演武场正中央“体验士气”。骑兵从两侧呼啸而过，你吓得腿软，事后却被他拍肩夸“胆子不错”。政绩 -50。', cash:-50 },
   { text:'【柴凛的特制护具】柴凛塞给你一件新发明的小型护具。你带在身上，结果当天巡查时被失控的马车撞飞，护具替你挡下致命一击。政绩 +60。', cash:60 },
-  { text:'【万里的画作】碧万里偷偷给你画了一幅肖像，画得惟妙惟肖，你惊喜地裱起来挂在墙上。同僚看了都夸你有品位。政绩 +40。', cash:40 },
+  { text:'【万里的画作】碧万里偷偷给你画了一幅肖像，画得惟妙惟肖，你惊喜地裱起来挂在墙上。同僚看了都夸你有品位。政绩 +50。', cash:50 },
   { text:'【春姬的托付】春姬拜托你顺路给茶州送去一批茶家支援的物资，你照办了。回程时她特意送来一封亲笔感谢信，还附了一罐上好的茶叶。政绩 +50。', cash:50 },
-  { text:'【杨修的考核】侍郎杨修面无表情地翻了翻你交上去的报告，用中指推了推眼镜，说了句“还行，但某个地方实在是……”。你回去重查了三遍才发现错误。政绩 +40。', cash:40 },
+  { text:'【杨修的考核】侍郎杨修面无表情地翻了翻你交上去的报告，用中指推了推眼镜，说了句“还行，但某个地方实在是……”。你回去重查了三遍才发现错误。政绩 +50。', cash:50 },
   { text:'【霄太师的坑】霄太师笑眯眯给你一个“稳赚不赔”的差事，你完成后发现奖励是一张欠条。政绩 -50。', cash:-50 },
-  { text:'【秀丽的馒头】你帮秀丽试吃新作点心，被刘辉撞见，他眼巴巴看着你吃完最后一个。政绩 +20。', cash:20 },
+  { text:'【秀丽的馒头】你帮秀丽试吃新作点心，被刘辉撞见，他眼巴巴看着你吃完最后一个。政绩 +30。', cash:30 },
   { text:'【英姬的考验】你被茶英姬抓去给春姬和克洵当“恋爱参谋”，结果说错话被羽扇敲头。政绩 -40。', cash:-40 },
-  { text:'【香铃的茶】香铃小姐见你在加班，默默给你泡了杯茶。温度刚好，香气怡人。你还没道谢，龙莲就从窗口探进头来问“有没有点心”。政绩 +30。', cash:30 },
+  { text:'【香铃的茶】香铃小姐见你在加班，默默给你泡了杯茶。温度刚好，香气怡人。你还没道谢，龙莲就从窗口探进头来问“有没有点心”。政绩 +40。', cash:40 },
   { text:'【黎深的礼物】红黎深大人突然扔给你一包东西，打开是上好的文房四宝。你还没来得及道谢，他就说“给秀丽送去，别让她知道是我给的”。政绩 -40。', cash:-40 },
   { text:'【三太的纠缠】王庆张在官署门口堵你，非要你帮他给秀丽递情书。你正为难，静兰路过，笑眯眯地把三太“请”走了，临走对你说：“辛苦了，下次直接告诉我。”政绩 -40。', cash:-40 },
   { text:'【霄太师的梅干】霄太师硬塞给你一颗“超级和好梅干”，说能变聪明。你吃了，酸得眼泪直流，但下午算账时确实一次没错。霄太师满意地点头：“你看。”政绩 +50。', cash:50 },
   { text:'【景侍郎的同情】景侍郎看你忙得焦头烂额，默默帮你分担了一半文书。你感激涕零。政绩 +60。', cash:60 },
   { text:'【来俊臣的白菊】刑部尚书来俊臣递来一朵白菊，微笑邀请你“有空一起躺棺材讨论死后世界”。你礼貌拒绝。他遗憾地说：“真可惜，我连墓地都替你预选好了。”政绩 -40。', cash:-40 },
-  { text:'【葵长官的“表扬”】葵皇毅看完你的报告，面无表情地说：“比铜花金龟强一点。”你气得想掀桌，但回头发现这份评价竟让你莫名有了干劲。政绩 +30。', cash:30 },
+  { text:'【葵长官的“表扬”】葵皇毅看完你的报告，面无表情地说：“比铜花金龟强一点。”你气得想掀桌，但回头发现这份评价竟让你莫名有了干劲。政绩 +40。', cash:40 },
   { text:'【悠舜的鹿牛】悠舜忽然讲起牛和鹿头朝同一方向休息。你听得一头雾水，他笑着收住：“不明白也没关系。”第二天你莫名没走错方向。政绩 +60。', cash:60 },
-  { text:'【司马迅的独眼】迅听完你的打算，笑眯眯指指自己那只独眼：“大小姐说，不到最后别亮底牌。”你留了一手。第二天果然有人来抢你手里那张。政绩 +40。', cash:40 }
+  { text:'【司马迅的独眼】迅听完你的打算，笑眯眯指指自己那只独眼：“大小姐说，不到最后别亮底牌。”你留了一手。第二天果然有人来抢你手里那张。政绩 +50。', cash:50 },
+  { text:'【朱鸾的汉字】朱鸾蹲在地上写自己的名字，写完抬头问你：“‘鸾’字难写吗？”你蹲下教她笔画。写完她盯着字看了半天：“之前秀丽姐姐说过，这是红色的传说中的鸟。”政绩 +40。', cash:40 },
+  { text:'【凤麟的传闻】你在走廊听见两个老官吏嘀咕：“红家背后有‘凤麟’……”另一个压低声音：“真假？？”你竖起耳朵，他们立刻闭嘴。虽然没听完，但这条线索以后说不定用得上。政绩 +40。', cash:40 }
 ];
 
 const FATE_CARDS = [
   { text:'【黎深的凝视】你在走廊上不小心撞到了红黎深。他冷冷地盯着你看了整整一分钟，你感觉自己被凌迟了。政绩 -60。', cash:-60 },
   { text:'【黄奇人的面具】你不小心瞥见了黄尚书面具下的一角。为了压惊，你请了三天假，还花了不少钱买安神药。政绩 -90。', cash:-90 },
   { text:'【旺季的刁难】你的提案被门下省长官旺季抓住了漏洞，不仅被驳回重写，还被扣了三个月的俸禄。政绩 -120。', cash:-120 },
-  { text:'【御史台的茶】你什么都没做错，却被御史台迫审讯了2个时辰才被放出来。政绩 -70。', cash:-70 },
+  { text:'【御史台的茶】你什么都没做错，却被御史台迫审讯了2个时辰才被放出来。政绩 -50。', cash:-50 },
   { text:'【静兰的竹笋】你不小心说了一句“红小姐好像瘦了”，当天晚上走夜路时，被不知从哪飞来的竹笋精准打中后脑勺。政绩 -80。', cash:-80 },
   { text:'【龙莲的午夜笛声】蓝龙莲为了寻找灵感，在你家屋顶吹了一整晚的笛子。你一夜未眠，第二天顶着黑眼圈工作连连出错。政绩 -60。', cash:-60 },
   { text:'【陆清雅的陷阱】你按照陆清雅“无意间”透露的建议去处理政务，结果踩了雷，背上了严重的黑锅。政绩 -130。', cash:-130 },
@@ -392,22 +394,24 @@ const FATE_CARDS = [
   { text:'【红线被踩】你不小心破坏了红黎深的闲情雅致，被吏部下达了一个月内完成半年的工作量。政绩 -80。', cash:-80 },
   { text:'【珀明的怒火】你提交的报告格式一塌糊涂，被负责审核的碧珀明狠狠退回，并附赠了一篇长达三页的痛批。你花了一整夜重写，心力交瘁。政绩 -140。', cash:-140 },
   { text:'【剑鞘警告】你因为公事和兵部的武官起了争执，对方虽然没有拔剑，但用剑鞘狠狠敲了你的腿。政绩 -60。', cash:-60 },
-  { text:'【暴雨冲毁】你负责督建的防汛工程被一场大暴雨冲垮了（其实是之前的贪官留下的豆腐渣工程）。你被迫背锅。政绩 -150。', cash:-150 },
+  { text:'【暴雨冲毁】你负责督建的防汛工程被一场大暴雨冲垮了（其实是之前的贪官留下的豆腐渣工程）。你被迫背锅。政绩 -120。', cash:-120 },
   { text:'【十三姬的铁拳】你不小心撞见十三姬在独自思念故人，她满脸通红恼羞成怒，给了你一记铁拳。你不仅被揍得眼冒金星，还被上司嫌弃带伤办公。政绩 -60。', cash:-60 },
   { text:'【瑠花的试炼】你在缥家迷了路，撞见了坐在椅上的缥瑠花。她只用那双黑夜般的眼眸扫了你一眼，便冷冷地指出了你公文里最致命的逻辑漏洞，你冷汗直流地修正了错误，虽保住了官位，但那份被彻底看穿的无力感让你彻夜难眠。政绩 -100。', cash:-100 },
-  { text:'【苏芳的琴声】你拉了一曲《苏芳》，狸狸闭眼听完，跟你交流人生。政绩 +40。', cash:40 },
+  { text:'【苏芳的琴声】你拉了一曲《苏芳》，狸狸闭眼听完，跟你交流人生。政绩 +50。', cash:50 },
   { text:'【榛渊西的“商机”】榛渊西神秘兮兮地拉你入伙一桩“稳赚不赔”的买卖，你想起他向来容易上当，果断拒绝。第二天他又拿来一幅“名家真迹”请你鉴赏，你一眼认出是赝品。政绩 -40。', cash:-40 },
   { text:'【庆张的新酒】庆张请你品尝他家新酿的酒，你盛情难却喝了一杯，结果后劲大得第二天顶着宿醉上朝，被上司皱眉问“你身上怎么一股酒味”。政绩 -70。', cash:-70 },
-  { text:'【皋韩升的箭】皋韩升在靶场练习，你路过时被拉去帮忙举靶。一支箭擦着你的发髻钉在靶上，他连连道歉，你腿软了半天。政绩 -30。', cash:-30 },
-  { text:'【羽羽的追击】你在走廊上被追着刘辉跑的羽羽大人一头撞上，小小的毛茸茸身体弹了出去。你慌忙把他扶起来，他揪着你的袖子问“看见陛下了吗”。政绩 -20。', cash:-20 },
+  { text:'【皋韩升的箭】皋韩升在靶场练习，你路过时被拉去帮忙举靶。一支箭擦着你的发髻钉在靶上，他连连道歉，你腿软了半天。政绩 -40。', cash:-40 },
+  { text:'【羽羽的追击】你在走廊上被追着刘辉跑的羽羽大人一头撞上，小小的毛茸茸身体弹了出去。你慌忙把他扶起来，他揪着你的袖子问“看见陛下了吗”。政绩 -30。', cash:-30 },
   { text:'【荀彧的公文】刘志美的副官荀彧托你转交一份急件，你顺手压在桌角忘了。第二天他面无表情地站在你面前，一言不发盯了你三秒。政绩 -40。', cash:-40 },
-  { text:'【翔琳的乌龙】两个自称“茶州秃鹰”的小鬼头在贵阳街头横冲直撞，你被其中一个撞了个满怀。手里的文书散了一地。有个小鬼头煞有介事地喊了声“对不住了”，然后一溜烟跑没影了。你蹲在地上捡了半天，发现其中一页被踩了个脚印。政绩 -40。', cash:-20 },
+  { text:'【翔琳的乌龙】两个自称“茶州秃鹰”的小鬼头在贵阳街头横冲直撞，你被其中一个撞了个满怀。手里的文书散了一地。有个小鬼头煞有介事地喊了声“对不住了”，然后一溜烟跑没影了。你蹲在地上捡了半天，发现其中一页被踩了个脚印。政绩 -40。', cash:-40 },
   { text:'【欧阳纯的歌】你偶然听到欧阳纯大人私下哼歌，天籁之音让你感动得泪流满面。他请你保密，你守住了这个秘密，但总觉得心情特别好。政绩 +50。', cash:50 },
-  { text:'【不知名的蜜柑】你桌上突然多了一包蜜柑，附了张字条：“吃了就好好干活。”你问了一圈都不知道是谁送的。后来你发现黎深路过你门口时轻轻哼了一声。政绩 +20。', cash:20 },
-  { text:'【旺季的琴中琴】深夜路过庭院，听见旺季弹琴。琴声让你想起最初为官的理由。第二天你主动接下没人要的苦差。政绩 +50。', cash:50 },
+  { text:'【不知名的蜜柑】你桌上突然多了一包蜜柑，附了张字条：“吃了就好好干活。”你问了一圈都不知道是谁送的。后来你发现黎深路过你门口时轻轻哼了一声。政绩 +30。', cash:30 },
+  { text:'【旺季的琴中琴】深夜路过庭院，听见旺季弹琴。琴声让你想起最初为官的理由。第二天你主动接下没人要的苦差。政绩 +70。', cash:70 },
   { text:'【百合的手腕】贵阳红家乱成一锅粥，百合三言两语就挡回族人，并吩咐你一份办事清单：“红家的男人感情用事，女人做事。”果然事情很快就解决了。政绩 +50。', cash:50 },
-  { text:'【玉环的暴毙】你偶然翻阅旧档，发现红玉环暴毙、邵可离家的年份紧挨在一起。你盯着那几行字，觉得红家很多事都从那时起拐了弯。政绩 +60。', cash:20 },
-  { text:'【燕青的狸猫汤】燕青竖起大拇指：“狸猫汤很好喝哦，只是很难逮。”苏芳当场炸毛。你夹在中间，被两人吵得一下午没干成活。政绩 -100。', cash:-30 }
+  { text:'【玉环的暴毙】你偶然翻阅旧档，发现红玉环暴毙、邵可离家的年份紧挨在一起。你盯着那几行字，觉得红家很多事都从那时起拐了弯。政绩 +60。', cash:60 },
+  { text:'【燕青的狸猫汤】燕青竖起大拇指：“狸猫汤很好喝哦，只是很难逮。”苏芳当场炸毛。你夹在中间，被两人吵得一下午没干成活。政绩 -100。', cash:-100 },
+  { text:'【龙莲的熊猫】龙莲带你去九彩江看熊猫，说着“要与自然共鸣”。你抱着熊猫幼仔睡了一下午，醒来发现工作全堆到明天。政绩 -60。', cash:-60 },
+  { text:'【幽灵误会】你听同僚说王之前以为璃樱是幽灵，每晚都在府库上供。你笑出声，璃樱正好路过，面无表情地看着你，你马上把笑咽回去。政绩 -40。', cash:-40 }
 ];
 
 const $ = (sel, root=document) => root.querySelector(sel);
@@ -432,7 +436,7 @@ function renderSetupStep1(){
           <button class="btn btn-primary" onclick="renderSetupStep2(5)">5</button>
         </div>
         <div class="hint">
-          初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
+          初始政绩 1,500 · 经过起点领俸禄（从九品 200，每升一品 +60，正从同品同俸）<br>
           率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
           走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
           光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
@@ -454,7 +458,7 @@ function renderSetupStep2(count){
           <button class="btn btn-primary" id="btn-start">开始游戏</button>
         </div>
         <div class="hint">
-          初始政绩 1,500 · 经过起点领俸禄（从九品 150，每升一品 +50，正从同品同俸）<br>
+          初始政绩 1,500 · 经过起点领俸禄（从九品 200，每升一品 +60，正从同品同俸）<br>
           率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
           走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
           光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
@@ -730,36 +734,12 @@ function moveCurrentPlayer(steps){
         p.cash += sal;
         addLog(`${p.name} 经过王都贵阳，领取俸禄 ${fmt(sal)} 政绩（${RANKS[p.rankIdx]}）。`,'gold');
         updateUI();
-
-        if(p.rankIdx < WIN_RANK_IDX){
-          const nextRank = p.rankIdx + 1;
-          const cost = RANK_COST[nextRank];
-          if(p.cash >= cost){
-            showModal({
-              title: '🏯 考绩晋升',
-              body: `<p>${p.name} 经过王都贵阳，可以花费 <b>${fmt(cost)}</b> 政绩进行考绩，晋升为「${RANKS[nextRank]}」。</p>
-                     <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)} · 晋升后俸禄：${fmt(getSalary(nextRank))}）</p>`,
-              actions:[
-                {label: '放弃晋升', onClick: () => { closeModal(); settleLanding(p); }},
-                {label: `花费 ${fmt(cost)} 晋升`, primary: true, onClick: () => {
-                  closeModal();
-                  p.cash -= cost;
-                  p.rankIdx = nextRank;
-                  addLog(`🎉 ${p.name} 花费 ${fmt(cost)} 政绩打点考绩，晋升为「${RANKS[p.rankIdx]}」！`,'gold');
-                  updateUI();
-                  if(p.rankIdx >= WIN_RANK_IDX){
-                    endGame(p, '官拜正二品·尚书令，成为彩云国实务百官之首');
-                  } else {
-                    settleLanding(p);
-                  }
-                }}
-              ]
-            });
-            return;
-          } else {
-            addLog(`${p.name} 的政绩不足以支付考绩费用（需 ${fmt(cost)}），未能晋升。`,'muted');
-          }
+        if(newPos === 0){
+          settleLanding(p);
+        } else {
+          tryPromote(p, false, () => { settleLanding(p); });
         }
+        return;
       }
       updateUI();
       settleLanding(p);
@@ -775,6 +755,39 @@ function moveCurrentPlayer(steps){
   walk();
 }
 
+function tryPromote(p, allowRepeat, onDone){
+  if(p.rankIdx >= WIN_RANK_IDX){ onDone(); return; }
+  const nextRank = p.rankIdx + 1;
+  const cost = RANK_COST[nextRank];
+  if(p.cash < cost){
+    addLog(`${p.name} 的政绩不足以支付考绩费用（需 ${fmt(cost)}），未能晋升。`,'muted');
+    onDone();
+    return;
+  }
+  showModal({
+    title: '🏯 考绩晋升',
+    body: `<p>${p.name} 经过/停留在王都贵阳，可以花费 <b>${fmt(cost)}</b> 政绩进行考绩，晋升为「${RANKS[nextRank]}」。</p>
+           <p style="margin-top:8px;font-size:13px;color:#8a8794;">（当前政绩：${fmt(p.cash)} · 晋升后俸禄：${fmt(getSalary(nextRank))}${allowRepeat?' · 可连续晋升':''}）</p>`,
+    actions:[
+      {label: allowRepeat ? '结束晋升' : '放弃晋升', onClick: () => { closeModal(); onDone(); }},
+      {label: `花费 ${fmt(cost)} 晋升`, primary: true, onClick: () => {
+        closeModal();
+        p.cash -= cost;
+        p.rankIdx = nextRank;
+        addLog(`🎉 ${p.name} 花费 ${fmt(cost)} 政绩打点考绩，晋升为「${RANKS[p.rankIdx]}」！`,'gold');
+        updateUI();
+        if(p.rankIdx >= WIN_RANK_IDX){
+          endGame(p, '官拜正二品·尚书令，成为彩云国实务百官之首');
+        } else if(allowRepeat){
+          tryPromote(p, true, onDone);
+        } else {
+          onDone();
+        }
+      }}
+    ]
+  });
+}
+
 function settleLanding(p){
   if(G.phase==='over') return;
   const cell=BOARD[p.pos];
@@ -787,8 +800,9 @@ function settleLanding(p){
 
   switch(cell.type){
     case 'start':
-      addLog(`${p.name} 回到王都贵阳，稍作休整。`,'muted');
-      advanceTurn(); break;
+      addLog(`${p.name} 停在王都贵阳，可连续考绩晋升。`,'muted');
+      tryPromote(p, true, () => advanceTurn());
+      break;
     case 'prop':
       handleProperty(p,p.pos); break;
     case 'chance': {
@@ -815,11 +829,11 @@ function settleLanding(p){
         showModal({
           title: '📜 兵部·棋局',
           body: `<p>孙陵王摆开棋盘：“来一局？”你硬着头皮坐下。</p>
-                 <p style="margin-top:8px;font-size:13px;color:#8a8794;">掷骰 ≥5 赢棋，政绩 +60；失败被将军，停一回合。</p>`,
+                 <p style="margin-top:8px;font-size:13px;color:#8a8794;">掷骰 ≥4 赢棋，政绩 +60；失败被将军，停一回合。</p>`,
           actions: [{ label:'掷骰', primary:true, onClick:()=>{
             closeModal();
             const d = randInt(1,6);
-            if (d >= 5) {
+            if (d >= 4) {
               p.cash += 60;
               addLog(`${p.name} 掷出 ${d}，棋高一着赢了孙陵王。政绩 +60。`,'green');
               updateUI(); advanceTurn();
@@ -835,16 +849,15 @@ function settleLanding(p){
           title: '📜 工部·酒局',
           body: `<p>欧阳侍郎第无数次纠正：“叫我玉，不是阳玉。”你赶紧点头称是。</p>
                  <p>管飞翔拎着酒壶走过来：“来，陪我喝两杯。”</p>
-                 <p style="margin-top:8px;font-size:13px;color:#8a8794;">掷骰 = 6 赢过酒豪，前进 3 格；掷出 1–5 则醉倒，后退 1 格并错过下一轮。</p>`,
+                 <p style="margin-top:8px;font-size:13px;color:#8a8794;">掷骰 ≥5 赢过酒豪，前进 3 格；掷出 1–4 则醉倒，后退 1 格（不停回合）。</p>`,
           actions: [{ label:'掷骰', primary:true, onClick:()=>{
             closeModal();
             const d = randInt(1,6);
-            if (d === 6) {
-              addLog(`${p.name} 掷出 6，竟把管尚书喝趴下了，前进 3 格。`,'green');
+            if (d >= 5) {
+              addLog(`${p.name} 掷出 ${d}，竟把管尚书喝趴下了，前进 3 格。`,'green');
               moveCurrentPlayer(3);
             } else {
-              p.skipTurns = 1;
-              addLog(`${p.name} 掷出 ${d}，醉倒在地，后退 1 格并错过下一轮。`,'red');
+              addLog(`${p.name} 掷出 ${d}，醉倒在地，后退 1 格。`,'red');
               p.pos = (p.pos - 1 + BOARD_LEN) % BOARD_LEN;
               renderTokens(); updateUI(); advanceTurn();
             }
@@ -940,11 +953,11 @@ function handleProperty(p,idx){
   }
 
   const owner=G.players[ownerIdx];
-  let rent=cell.rent * 4;
+  let rent=cell.rent * 2;
   const groupCells=BOARD.map((c,i)=>(c.type==='prop'&&c.group===cell.group)?i:-1).filter(i=>i>=0);
   const ownerHasAll=groupCells.length>=2 && groupCells.every(i=>owner.props.includes(i));
   if(ownerHasAll) rent*=2;
-  const rankBonus=1+owner.rankIdx*0.05;
+  const rankBonus=1+owner.rankIdx*0.02;
   rent=Math.round(rent*rankBonus);
 
   addLog(`${p.name} 需向 ${owner.name} 支付「${cell.name}」俸禄 ${fmt(rent)} 政绩${ownerHasAll?'（同组集齐·双倍）':''}。`,'red');
@@ -973,8 +986,9 @@ function startAuction(idx){
     addLog(`无人能参与「${cell.name}」的拍卖，流拍。`,'muted');
     advanceTurn(); return;
   }
-  G.auction={ cellIndex:idx, active:eligible.map(p=>p.id), currentBidder:0, highest:0, highestBidder:null, passed:[] };
-  addLog(`🔨 「${cell.name}」进入拍卖，起拍价 50 政绩。`,'gold');
+  const basePrice = Math.floor(cell.price / 2);
+  G.auction={ cellIndex:idx, basePrice, active:eligible.map(p=>p.id), currentBidder:0, highest:0, highestBidder:null, passed:[] };
+  addLog(`🔨 「${cell.name}」进入拍卖，起拍价 ${fmt(basePrice)} 政绩。`,'gold');
   updateUI();
 }
 
@@ -1001,7 +1015,8 @@ function renderAuctionBar(bar){
     bidder=G.players[a.currentBidder]; guard++;
   }
 
-  const minBid=a.highest===0?50:a.highest+50;
+  const basePrice = a.basePrice !== undefined ? a.basePrice : Math.floor(cell.price/2);
+  const minBid = a.highest === 0 ? basePrice : a.highest + 50;
   const canAfford=bidder.cash>=minBid;
 
   const info=document.createElement('span');
@@ -1124,8 +1139,8 @@ function payToLeaveJail(){
     G.jailReleasePlayer=null; updateUI(); advanceTurn(); return;
   }
   p.cash-=100; p.jailTurns=0; G.jailReleasePlayer=null;
-  addLog(`${p.name} 缴纳 100 政绩，离开御史台。`,'gold');
-  updateUI(); advanceTurn();
+  addLog(`${p.name} 缴纳 100 政绩，离开御史台，可以立刻行动。`,'gold');
+  updateUI();
 }
 
 function advanceTurn(){

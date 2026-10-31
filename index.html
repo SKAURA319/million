@@ -265,8 +265,7 @@ const RANK_COST = [0, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650, 700
 const RANKS = [
   '从九品', '正九品', '从八品', '正八品', '从七品', '正七品',
   '从六品', '正六品', '从五品', '正五品', '从四品', '正四品',
-  '从三品', '正三品', '从二品', '正二品',
-  '从一品', '正一品'
+  '从三品', '正三品', '从二品', '正二品'
 ];
 
 const COLOR_HEX = { red:'#ff6b6b', blue:'#4ecdc4', green:'#51cf66', orange:'#ff922b', purple:'#cc5de8' };
@@ -436,7 +435,7 @@ function renderSetupStep1(){
           <button class="btn btn-primary" onclick="renderSetupStep2(5)">5</button>
         </div>
         <div class="hint">
-          初始政绩 1,500 · 经过起点领俸禄（从九品 200，每升一品 +60，正从同品同俸）<br>
+          初始政绩 1,500 · 经过起点领俸禄（从九品 200，正从同品同俸，每升一品 +60）<br>
           率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
           走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
           光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
@@ -458,7 +457,7 @@ function renderSetupStep2(count){
           <button class="btn btn-primary" id="btn-start">开始游戏</button>
         </div>
         <div class="hint">
-          初始政绩 1,500 · 经过起点领俸禄（从九品 200，每升一品 +60，正从同品同俸）<br>
+          初始政绩 1,500 · 经过起点领俸禄（从九品 200，正从同品同俸，每升一品 +60）<br>
           率先升至「正二品·尚书令」，或令其他玩家全部破产，即获胜。<br>
           走到「御史台·弹劾」可花费 500 政绩弹劾官阶更高的同僚；走到「御史台·监狱」则入狱反省。<br>
           光靠俸禄不够，需购置地产收租，才能凑足晋升所需的政绩。
@@ -580,6 +579,17 @@ function renderTokens(){
     t.className='token'; t.style.background=COLOR_HEX[p.color]; t.title=p.name;
     cellEl.appendChild(t);
   });
+
+  document.querySelectorAll('.cell[data-idx]').forEach(el=>{
+    const idx = Number(el.dataset.idx);
+    const cellData = BOARD[idx];
+    if(!cellData || cellData.type !== 'prop') return;
+    const bar = el.querySelector('.c-owner-bar');
+    if(!bar) return;
+    const ownerIdx = findOwner(idx);
+    const owner = ownerIdx >= 0 ? G.players[ownerIdx] : null;
+    bar.style.background = owner ? COLOR_HEX[owner.color] : '#e0e0e0';
+  });
 }
 
 function findOwner(cellIdx){
@@ -597,7 +607,7 @@ function renderPlayers(){
 
     let nextCostInfo = '';
     if (p.rankIdx < WIN_RANK_IDX) {
-      nextCostInfo = `<div class="pc-next">下一级：${fmt(RANK_COST[p.rankIdx + 1])} · 俸禄 ${fmt(getSalary(p.rankIdx))}</div>`;
+      nextCostInfo = `<div class="pc-next">下一级：${fmt(RANK_COST[p.rankIdx + 1])} · 当前俸禄 ${fmt(getSalary(p.rankIdx))}</div>`;
     }
 
     card.innerHTML=`
@@ -1030,11 +1040,14 @@ function renderAuctionBar(bar){
     b10.textContent=`出价 ${fmt(minBid)}`;
     b10.onclick=()=>auctionBid(bidder,minBid);
     bar.appendChild(b10);
-    const b50=document.createElement('button');
-    b50.className='btn btn-sm';
-    b50.textContent=`出价 ${fmt(minBid+50)}`;
-    b50.onclick=()=>auctionBid(bidder,minBid+50);
-    bar.appendChild(b50);
+
+    if(bidder.cash >= minBid + 50){
+      const b50=document.createElement('button');
+      b50.className='btn btn-sm';
+      b50.textContent=`出价 ${fmt(minBid+50)}`;
+      b50.onclick=()=>auctionBid(bidder,minBid+50);
+      bar.appendChild(b50);
+    }
   }
 
   const pass=document.createElement('button');
@@ -1164,7 +1177,7 @@ function advanceTurn(){
   if(cur.jailTurns>0){
     cur.jailTurns--;
     if(cur.jailTurns===0){
-      addLog(`${cur.name} 反省期满，可以离开御史台（或缴纳 100 提前离开）。`,'gold');
+      addLog(`${cur.name} 反省期满，可缴纳 100 政绩立刻行动，或继续反省放弃本回合。`,'gold');
       G.jailReleasePlayer=G.turn; updateUI(); return;
     }else{
       addLog(`${cur.name} 仍在御史台反省（剩余 ${cur.jailTurns} 回合）。`,'muted');
